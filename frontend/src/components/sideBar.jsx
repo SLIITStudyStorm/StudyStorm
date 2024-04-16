@@ -101,8 +101,8 @@ export default function Sidebar() {
         <List>
           <Link to='/' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title={!open ? "Home" : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'black',  }}>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute === '/' ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
                   <HomeRounded />
                 </ListItemIcon>
                 <ListItemText primary={"Home"} sx={{ opacity: open ? 1 : 0 }} />
@@ -113,7 +113,7 @@ export default function Sidebar() {
           <Link to='/profile' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title={!open ? "Profile" : ''} placement="right" arrow>  
               <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'initial', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute === '/profile' ? sideBarStyles.active : ''}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'black' }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
                   <Person />
                 </ListItemIcon>
                 <ListItemText primary={"Profile"} sx={{ opacity: open ? 1 : 0 }} />
