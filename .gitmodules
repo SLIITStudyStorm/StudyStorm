@@ -4,3 +4,9 @@
 [submodule "backend/FeedbackAndRatingService"]
 	path = backend/FeedbackAndRatingService
 	url = https://github.com/SLIITStudyStorm/FeedbackAndRatingService.git
+[submodule "backend/AuthenticationService"]
+	path = backend/AuthenticationService
+	url = https://github.com/SLIITStudyStorm/AuthenticationService.git
+[submodule "backend/NotificationService"]
+	path = backend/NotificationService
+	url = https://github.com/SLIITStudyStorm/NotificationService.git
