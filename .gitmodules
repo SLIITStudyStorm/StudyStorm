@@ -1,3 +1,6 @@
 [submodule "backend/CourseManagementService"]
 	path = backend/CourseManagementService
 	url = https://github.com/SLIITStudyStorm/CourseManagementService.git
+[submodule "backend/FeedbackAndRatingService"]
+	path = backend/FeedbackAndRatingService
+	url = https://github.com/SLIITStudyStorm/FeedbackAndRatingService.git
