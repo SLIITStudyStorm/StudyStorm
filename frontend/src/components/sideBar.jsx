@@ -13,8 +13,8 @@ import { toast } from 'react-toastify';
 
 import sideBarStyles from '../styles/sideBarStyles.module.css'
 
-import LogoBig from '/LogoBig.png';
-import Logo from '/Logo3.png';
+import LogoBig from '/LogoBig1.png';
+import Logo from '/Logo1.png';
 
 import { setSideBarStatus } from '../slices/customizeSlice';
 import { clearUserInfo, setUserInfo } from '../slices/authSlice';

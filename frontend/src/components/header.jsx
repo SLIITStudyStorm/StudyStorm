@@ -107,9 +107,9 @@ const Header = () => {
                 <Toolbar disableGutters>
                     <Box sx={{display: { xs: "none", md: "flex", cursor:'pointer' }}}>
                         {isSticky? 
-                            <img src="/Logo4.png" width='75px' onClick={() => navigate('/')}/> 
+                            <img src="/Logo2.png" width='75px' onClick={() => navigate('/')}/> 
                         :
-                            <img src="/Logo3.png" width='75px' onClick={() => navigate('/')}/> 
+                            <img src="/Logo1.png" width='75px' onClick={() => navigate('/')}/> 
                         }
                     </Box>
 
@@ -168,7 +168,7 @@ const Header = () => {
                         {isSticky? 
                             <img src="/LogoBig2.png" width='150px' onClick={() => navigate('/')}/> 
                         :
-                            <img src="/LogoBig.png" width='150px' onClick={() => navigate('/')}/> 
+                            <img src="/LogoBig1.png" width='150px' onClick={() => navigate('/')}/> 
                         }
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent:'center' }}>
