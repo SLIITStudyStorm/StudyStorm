@@ -4,10 +4,25 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import Sidebar from './components/sideBar';
 import Header from './components/header';
+import { useEffect, useState } from 'react';
 
 const App = () => {
+  const [title, setTitle] = useState("Home");
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case '/':
+        setTitle('Home');
+        break;
+      default:
+        setTitle('404 Not Found');
+        break;
+    }
+
+    document.title = `StudyStorm | ${title}`;
+  }, [title]);
   return (
     <>
       <ToastContainer />

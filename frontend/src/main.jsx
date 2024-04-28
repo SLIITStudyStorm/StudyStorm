@@ -1,15 +1,18 @@
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
-import store from './store.js'
-import { Provider } from 'react-redux'
-import Loading from './components/loading.jsx'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import store from './store.js'
+import Loading from './components/loading.jsx'
+
 import PrivateRoute from './components/privateRoute.jsx'
+import AdminRoute from './components/adminRoute.jsx'
 
 import App from './App.jsx'
 import HomePage from './pages/home.jsx'
 import NotFoundPage from './pages/404.jsx'
+
+import './index.css'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,10 +26,15 @@ const router = createBrowserRouter(
       {/* Private Routes */}
       <Route path='' element={ <PrivateRoute /> }>
         {/* <Route path='/profile' element={ <ProfilePage /> } /> */}
+
+        {/* Admin Routes */}
+        <Route path='' element={ <AdminRoute /> }>
+          
+        </Route>
       </Route>
       
       {/* Not Found Route */}
-      <Route path='*' element={ <NotFoundPage /> } action={()=>{document.title="abc"}} />
+      <Route path='*' element={ <NotFoundPage /> } />
     </Route>
   )
 );      

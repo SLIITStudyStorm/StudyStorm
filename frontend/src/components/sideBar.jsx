@@ -82,7 +82,6 @@ export default function Sidebar() {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [open, setOpen] = React.useState(sideBar ? sideBar.status : false);
-  const [title, setTitle] = React.useState("Home");
   const [anchorEl, setAnchorEl] = React.useState(null);
   
   const location = useLocation();
@@ -135,19 +134,6 @@ export default function Sidebar() {
   React.useEffect(() => {
     setOpen(sideBar ? sideBar.status : false);
   },[isSmallScreen]);
-
-  React.useEffect(() => {
-    switch (activeRoute) {
-      case '/':
-        setTitle('Home');
-        break;
-      default:
-        setTitle('404 Not Found');
-        break;
-    }
-
-    document.title = `StudyStorm | ${title}`;
-  }, [title]);
   
   return (
     <Box sx={{ display: 'flex' }} id='sideBarBox'>
