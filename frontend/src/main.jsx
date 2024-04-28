@@ -6,15 +6,18 @@ import { Provider } from 'react-redux'
 import Loading from './components/loading.jsx'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import PrivateRoute from './components/privateRoute.jsx'
+
 import App from './App.jsx'
+import HomePage from './pages/home.jsx'
+import NotFoundPage from './pages/404.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={ <App /> }>
+    <Route path='/' element={ <App /> } >
       
       {/* Public Routes */}
-      {/* <Route index={ true } path='/' element={ <HomePage /> } />
-      <Route path='/login' element={ <LoginPage /> } />
+      <Route index={ true } path='/' element={ <HomePage /> } />
+      {/* <Route path='/login' element={ <LoginPage /> } />
       <Route path='/register' element={ <RegisterPage /> } /> */}
         
       {/* Private Routes */}
@@ -23,7 +26,7 @@ const router = createBrowserRouter(
       </Route>
       
       {/* Not Found Route */}
-      {/* <Route path='*' element={ <NotFoundPage /> } /> */}
+      <Route path='*' element={ <NotFoundPage /> } action={()=>{document.title="abc"}} />
     </Route>
   )
 );      
