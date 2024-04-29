@@ -13,3 +13,6 @@
 [submodule "backend/LearnerService"]
 	path = backend/LearnerService
 	url = https://github.com/SLIITStudyStorm/LearnerService.git
+[submodule "backend/PaymentService"]
+	path = backend/PaymentService
+	url = https://github.com/SLIITStudyStorm/PaymentService.git
