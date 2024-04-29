@@ -155,6 +155,19 @@ export default function Sidebar() {
               </ListItemButton>
             </Tooltip>
           </ListItem></Link>
+
+          {userInfo && userInfo.role === 'ROLE_ADMIN' &&
+          <Link to='/admin/course/add' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'Home' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute === '/' ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                  <HomeRounded />
+                </ListItemIcon>
+                <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem></Link>
+          }
           
         </List>
         <Divider />

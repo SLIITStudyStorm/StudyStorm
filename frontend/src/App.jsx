@@ -15,12 +15,19 @@ const App = () => {
     switch (location.pathname) {
       case '/':
         setTitle('Home');
-        setShowHeader(true);
+        break;
+      case '/admin/course/add':
+        setTitle('Add Course');
         break;
       default:
         setTitle('404 Not Found');
-        setShowHeader(true);
         break;
+    }
+
+    if (location.pathname.includes('/admin')) {
+      setShowHeader(false);
+    } else { 
+      setShowHeader(true);
     }
 
     document.title = `StudyStorm | ${title}`;
