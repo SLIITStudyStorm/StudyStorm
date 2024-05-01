@@ -1,16 +1,20 @@
 import { useState } from "react"
-import { FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, OutlinedInput, Switch, TextField } from "@mui/material"
+import { FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, OutlinedInput, Switch, TextField, Typography } from "@mui/material"
+import { toast } from "react-toastify";
 
 import BreadCrumbs from "../../components/breadcrubs"
 import FormCard from "../../components/formCard"
 import FormUploadArea from "../../components/fileUpload"
 import CustomAutoComplete from "../../components/autoComplete"
+import CustomDatePicker from "../../components/datePicker"
+import api from "../../utils/api";
 
 import { DurationList, LanguageList, LevelList, SkillsList, SubjectList, TypeList } from "../../data"
-import CustomDatePicker from "../../components/datePicker"
 
 const AddCoursePage = () => {
     const [files, setFiles] = useState([]);
+    const [title, setTitle] = useState('');
+    const [desc, setDesc] = useState('');
     const [subject, setSubject] = useState(null);
     const [skills, setSkills] = useState([]);
     const [language, setLanguage] = useState('English');
@@ -21,13 +25,31 @@ const AddCoursePage = () => {
     const [price, setPrice] = useState(0);
     const [publish, setPublish] = useState(false);
 
+    const [titleError, setTitleError] = useState(false);
+    const [descError, setDescError] = useState(false);
+    const [subjectError, setSubjectError] = useState(false);
+    const [languageError, setLanguageError] = useState(false);
+    const [typeError, setTypeError] = useState(false);
+    const [levelError, setLevelError] = useState(false);
+    const [durationError, setDurationError] = useState(false);
+    const [startDateError, setStartDateError] = useState(false);
+    const [priceError, setPriceError] = useState(false);
+
 
     const onSelect = (files) =>{
         setFiles(files);
     }
 
     const handleSubmit = async() => {
-        console.log(files, subject, skills, language, type, level, duration, startDate, price, publish);
+        try {
+            if(titleError || descError || subjectError || languageError || typeError || levelError || durationError || startDateError || priceError){
+                throw new Error('Please fill all the required fields');
+            }
+
+            
+        } catch (error) {
+            toast.error(error.message);
+        }
     }
 
     return (
@@ -48,10 +70,40 @@ const AddCoursePage = () => {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} lg={12}>
-                                    <TextField variant="outlined" size="small" label="Title" placeholder="Title" fullWidth/>
+                                    <TextField 
+                                        variant="outlined" size="small" 
+                                        label="Title" placeholder="Title" 
+                                        fullWidth
+                                        value={title}
+                                        onChange={(e) => {
+                                            setTitle(e.target.value)
+
+                                            if(!e.target.value) setTitleError(true);
+                                            else setTitleError(false);
+                                        }}
+                                    />
+                                    <Typography variant="caption" display={titleError ? 'block' : 'none'} color={"red"} gutterBottom>
+                                        *{"Title is required"}
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={12} lg={12}>
-                                    <TextField variant="outlined" size="small" label="Description" placeholder="Description" fullWidth multiline minRows={2}/>
+                                    <TextField 
+                                        variant="outlined" size="small" 
+                                        label="Description" placeholder="Description" 
+                                        fullWidth 
+                                        multiline 
+                                        minRows={2}
+                                        value={desc}
+                                        onChange={(e) => {
+                                            setDesc(e.target.value)
+                                            
+                                            if(!e.target.value) setDescError(true);
+                                            else setDescError(false);
+                                        }}
+                                    />
+                                    <Typography variant="caption" display={descError ? 'block' : 'none'} color={"red"} gutterBottom>
+                                        *{"Description is required"}
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
                                     <CustomAutoComplete
@@ -59,6 +111,9 @@ const AddCoursePage = () => {
                                         options={SubjectList}
                                         value={subject}
                                         setValue={setSubject}
+                                        errorMsg={"Subject is required"}
+                                        isError={subjectError}
+                                        setError={setSubjectError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -67,6 +122,9 @@ const AddCoursePage = () => {
                                         options={LanguageList}
                                         value={language}
                                         setValue={setLanguage}
+                                        errorMsg={"Language is required"}
+                                        isError={languageError}
+                                        setError={setLanguageError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -75,6 +133,9 @@ const AddCoursePage = () => {
                                         options={TypeList}
                                         value={type}
                                         setValue={setType}
+                                        errorMsg={"Type is required"}
+                                        isError={typeError}
+                                        setError={setTypeError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -83,6 +144,9 @@ const AddCoursePage = () => {
                                         options={LevelList}
                                         value={level}
                                         setValue={setLevel}
+                                        errorMsg={"Level is required"}
+                                        isError={levelError}
+                                        setError={setLevelError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -91,6 +155,9 @@ const AddCoursePage = () => {
                                         options={DurationList}
                                         value={duration}
                                         setValue={setDuration}
+                                        errorMsg={"Duration is required"}
+                                        isError={durationError}
+                                        setError={setDurationError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -108,6 +175,9 @@ const AddCoursePage = () => {
                                         disablePast={true}
                                         value={startDate}
                                         setValue={setStartDate}
+                                        errorMsg={"Start Date is required"}
+                                        isError={startDateError}
+                                        setError={setStartDateError}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
@@ -120,8 +190,16 @@ const AddCoursePage = () => {
                                             label="Price"
                                             placeholder="Price"
                                             value={price}
-                                            onChange={(e) => setPrice(e.target.value)}
+                                            onChange={(e) => {
+                                                setPrice(e.target.value)
+
+                                                if(!e.target.value) setPriceError(true);
+                                                else setPriceError(false);
+                                            }}
                                         />
+                                        <Typography variant="caption" display={priceError ? 'block' : 'none'} color={"red"} gutterBottom>
+                                            *{"Description is required"}
+                                        </Typography>
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
