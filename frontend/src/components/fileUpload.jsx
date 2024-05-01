@@ -1,8 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { Toast } from 'primereact/toast';
 import { FileUpload } from 'primereact/fileupload';
-import { ProgressBar } from 'primereact/progressbar';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
@@ -12,7 +10,9 @@ import 'primeflex/primeflex.css';
 import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
-export default function FormUploadArea({multiple = false, accept = "image/*", maxFileSize = 1000000, selectfunc = () => {}}) {
+import customStyles from '../styles/fileUploadStyles.module.css';
+
+export default function FormUploadArea({multiple = false, accept = "image/*", maxFileSize = 1000000, label, selectfunc = () => {}}) {
     const toast = useRef(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
@@ -40,26 +40,44 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
 
     const itemTemplate = (file, props) => {
         return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{ width: '40%' }}>
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
-                    <span className="flex flex-column text-left ml-3">
-                        {file.name}
-                        <small>{new Date().toLocaleDateString()}</small>
-                    </span>
+            <>
+            {multiple ? 
+                <div className={`flex align-items-center flex-wrap`}>
+                    <div className="flex align-items-center" style={{ width: '55%' }}>
+                        <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
+                        <span className="flex flex-column text-left ml-3">
+                            {file.name}
+                            <small>{new Date().toLocaleDateString()}</small>
+                        </span>
+                    </div>
+                    <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
                 </div>
-                <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
-            </div>
+            :
+                <div className={`flex align-items-center flex-wrap flex-column p-0 ${customStyles.imgDiv}`}>
+                    <div className="flex align-items-left flex-column" style={{ width: '265px' }}>
+                        <img alt={file.name} role="presentation" className={customStyles.img} src={file.objectURL} height={'100%'} width={'100%'} />
+                        <div className={customStyles.imgDetailDiv}>
+                            <span className="flex flex-column text-center">
+                                {file.name}
+                                <small>{new Date().toLocaleDateString()}</small>
+                            </span>
+                            <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
+                        </div>
+                        <div className={customStyles.imgCloseDiv}><Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger" onClick={() => onTemplateRemove(file, props.onRemove)} /></div>
+                    </div>
+                </div>
+            }
+            </>
         );
     };
 
     const emptyTemplate = () => {
         return (
             <div className="flex align-items-center flex-column cursor-pointer" onClick={() => document.querySelector('.custom-choose-btn').click()}>
-                <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-                <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-                    Drag and Drop Image Here
+                <i className="pi pi-image mt-2 p-3" style={{ fontSize: '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
+                <span style={{ fontSize: '1em', color: 'var(--text-color-secondary)' }} className="my-3">
+                    Drag and Drop {label} Here
                 </span>
             </div>
         );
