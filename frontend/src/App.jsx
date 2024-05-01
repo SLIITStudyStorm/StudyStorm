@@ -8,19 +8,18 @@ import { useEffect, useState } from 'react';
 
 const App = () => {
   const location = useLocation();
-  const [title, setTitle] = useState("Home");
   const [showHeader, setShowHeader] = useState(location.pathname === '/');
 
   useEffect(() => {
     switch (location.pathname) {
       case '/':
-        setTitle('Home');
+        document.title = `StudyStorm | Home`;
         break;
       case '/admin/course/add':
-        setTitle('Add Course');
+        document.title = `StudyStorm | Add Course`;
         break;
       default:
-        setTitle('404 Not Found');
+        document.title = `StudyStorm | 404 Not Found`;
         break;
     }
 
@@ -30,8 +29,8 @@ const App = () => {
       setShowHeader(true);
     }
 
-    document.title = `StudyStorm | ${title}`;
-  }, [title]);
+  }, [location.pathname]);
+
   return (
     <>
       <ToastContainer />
