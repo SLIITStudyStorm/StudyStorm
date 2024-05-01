@@ -9,18 +9,6 @@ const BreadCrumbs = () => {
     const crumbs = path.split('/').filter((crumb) => crumb !== '');
 
     return (
-        // <nav>
-        //     <ul>
-        //         <li>
-        //             <Link to="/">Home</Link>
-        //         </li>
-        //         {crumbs.map((crumb, index) => (
-        //             <li key={index}>
-        //                 <Link to={`/${crumbs.slice(0, index + 1).join('/')}`}>{crumb}</Link>
-        //             </li>
-        //         ))}
-        //     </ul>
-        // </nav>
         <Breadcrumbs
             separator={<NavigateNext fontSize="small" />}
             aria-label="breadcrumb"
