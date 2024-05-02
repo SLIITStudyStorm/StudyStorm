@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, OutlinedInput, Switch, TextField, Typography } from "@mui/material"
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 import BreadCrumbs from "../../components/breadcrubs"
 import FormCard from "../../components/formCard"
 import FormUploadArea from "../../components/fileUpload"
 import CustomAutoComplete from "../../components/autoComplete"
 import CustomDatePicker from "../../components/datePicker"
-import api from "../../utils/api";
+import { courseApi } from "../../utils/api";
 
 import { DurationList, LanguageList, LevelList, SkillsList, SubjectList, TypeList } from "../../data"
 
@@ -42,13 +43,43 @@ const AddCoursePage = () => {
 
     const handleSubmit = async() => {
         try {
+
+            if(!title) setTitleError(true);
+            if(!desc) setDescError(true);
+            if(!subject) setSubjectError(true);
+            if(!language) setLanguageError(true);
+            if(!type) setTypeError(true);
+            if(!level) setLevelError(true);
+            if(!duration) setDurationError(true);
+            if(!startDate) setStartDateError(true);
+            if(price < 0 || price == null) setPriceError(true);
+
+            
             if(titleError || descError || subjectError || languageError || typeError || levelError || durationError || startDateError || priceError){
                 throw new Error('Please fill all the required fields');
             }
-
             
+            let start = dayjs(startDate).add(1, 'day').toDate().toISOString().split('T')[0]
+
+            const formData = new FormData();
+            formData.append('name', title);
+            formData.append('desc', desc);
+            formData.append('subject', subject);
+            formData.append('language', language);
+            formData.append('type', type);
+            formData.append('level', level);
+            formData.append('duration', duration);
+            formData.append('skills', skills);
+            formData.append('start_date', start);
+            formData.append('price', price);
+            formData.append('thumbnail', files[0]);
+            formData.append('published', publish);
+
+            let res = await courseApi.post("/course/create", formData);
+
+            toast.success(res.data.message);
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.response?.data?.message || error.message);
         }
     }
 
@@ -193,12 +224,12 @@ const AddCoursePage = () => {
                                             onChange={(e) => {
                                                 setPrice(e.target.value)
 
-                                                if(!e.target.value) setPriceError(true);
+                                                if(!e.target.value || e.target.value < 0) setPriceError(true);
                                                 else setPriceError(false);
                                             }}
                                         />
                                         <Typography variant="caption" display={priceError ? 'block' : 'none'} color={"red"} gutterBottom>
-                                            *{"Description is required"}
+                                            *{"Valid Price is required"}
                                         </Typography>
                                     </FormControl>
                                 </Grid>
