@@ -16,7 +16,7 @@ const App = () => {
       case '/':
         document.title = `StudyStorm | Home`;
         break;
-      case '/admin/course/add':
+      case '/admin/course/create':
         document.title = `StudyStorm | Add Course`;
         break;
         case `/admin/course/update/${id}`:

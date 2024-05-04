@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom";
 import { FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, OutlinedInput, Switch, TextField, Typography } from "@mui/material"
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+
+import { courseApi } from "../../utils/api";
+import createFileObjectFromPath from "../../utils/createFileObjectFromPath";
 
 import BreadCrumbs from "../../components/breadcrubs"
 import FormCard from "../../components/formCard"
 import FormUploadArea from "../../components/fileUpload"
 import CustomAutoComplete from "../../components/autoComplete"
 import CustomDatePicker from "../../components/datePicker"
-import { courseApi } from "../../utils/api";
 
 import { DurationList, LanguageList, LevelList, SkillsList, SubjectList, TypeList } from "../../data"
-import { useParams, useSearchParams } from "react-router-dom";
+
+import courseStyles from "../../styles/course.module.css"
+import { Close } from "@mui/icons-material";
 
 const CoursePage = () => {
     const [files, setFiles] = useState([]);
@@ -38,6 +43,7 @@ const CoursePage = () => {
     const [priceError, setPriceError] = useState(false);
 
     const { id } = useParams()
+    const navigate = useNavigate();
 
     const onSelect = (files) =>{
         setFiles(files);
@@ -77,7 +83,13 @@ const CoursePage = () => {
             formData.append('thumbnail', files[0]);
             formData.append('published', publish);
 
-            let res = await courseApi.post("/course/create", formData);
+            let res;
+            if(id){
+                formData.append('course_id', id);
+                res = await courseApi.put(`/course/update/`, formData);
+            }else{
+                res = await courseApi.post("/course/create", formData);
+            }
 
             toast.success(res.data.message);
         } catch (error) {
@@ -101,9 +113,14 @@ const CoursePage = () => {
             setStartDate(dayjs(data.payload.start_date));
             setPrice(data.payload.price);
             setPublish(data.payload.published);
-            setFiles([data.payload.thumbnail]);
+
+            if(data.payload.thumbnail) {
+                let file = await createFileObjectFromPath(data.payload.thumbnail);
+                setFiles(file);
+            }
 
             toast.success(data.message);
+
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }
@@ -114,8 +131,7 @@ const CoursePage = () => {
             fetchCourse()
         }
     }, [])
-
-
+    
 
     return (
         <>
@@ -124,6 +140,12 @@ const CoursePage = () => {
                 <FormCard title={"Course"} action={id ? "Update" : "Create"} onClick={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
+                            { files.length > 0 ?
+                            <div style={{width:'100%', display:'flex', justifyContent:'center'}} className={courseStyles.imgDiv} onClick={() => setFiles([])}>
+                                <img src = {(files[0].objectURL)} className={courseStyles.img}  width={'85%'}/>
+                                <Close className={courseStyles.imgCloseIcon}/>
+                            </div>
+                            :
                             <FormUploadArea 
                                 multiple={false}
                                 accept={"image/*"}
@@ -131,6 +153,7 @@ const CoursePage = () => {
                                 label={"Course Thumbnail"}
                                 selectfunc={onSelect}
                             />
+                            }
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={2}>

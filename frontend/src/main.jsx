@@ -30,7 +30,7 @@ const router = createBrowserRouter(
 
         {/* Admin Routes */}
         <Route path='/admin' element={ <AdminRoute /> }>
-          <Route path='/admin/course/add' element={ <CoursePage /> } />
+          <Route path='/admin/course/create' element={ <CoursePage /> } />
           <Route path='/admin/course/update/:id' element={ <CoursePage /> } />
         </Route>
       </Route>
