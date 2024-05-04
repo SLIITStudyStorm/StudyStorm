@@ -16,6 +16,9 @@ const App = () => {
       case '/':
         document.title = `StudyStorm | Home`;
         break;
+      case '/admin/courses':
+        document.title = `StudyStorm | Courses`;
+        break;
       case '/admin/course/create':
         document.title = `StudyStorm | Add Course`;
         break;
