@@ -13,7 +13,7 @@ import HomePage from './pages/home.jsx'
 import NotFoundPage from './pages/404.jsx'
 
 import './index.css'
-import AddCoursePage from './pages/coursemanagement/addCourse.jsx'
+import CoursePage from './pages/coursemanagement/course.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,7 +30,8 @@ const router = createBrowserRouter(
 
         {/* Admin Routes */}
         <Route path='/admin' element={ <AdminRoute /> }>
-          <Route path='/admin/course/add' element={ <AddCoursePage /> } />
+          <Route path='/admin/course/add' element={ <CoursePage /> } />
+          <Route path='/admin/course/update/:id' element={ <CoursePage /> } />
         </Route>
       </Route>
       

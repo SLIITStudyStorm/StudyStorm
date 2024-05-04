@@ -13,7 +13,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import customStyles from '../styles/fileUploadStyles.module.css';
 
 export default function FormUploadArea({multiple = false, accept = "image/*", maxFileSize = 1000000, label, selectfunc = () => {}}) {
-    const toast = useRef(null);
+
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     
@@ -95,7 +95,7 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
             <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
 
             <FileUpload ref={fileUploadRef} name="fileupload[]" multiple={multiple} accept={accept} maxFileSize={maxFileSize}
-                onSelect={onSelect} onError={onClear} onClear={onClear} 
+                onSelect={onSelect} onError={onClear} onClear={onClear}
                 itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                 uploadOptions={uploadOptions} chooseOptions={chooseOptions} cancelOptions={cancelOptions} />
         </div>

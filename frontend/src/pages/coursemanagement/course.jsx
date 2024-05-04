@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, OutlinedInput, Switch, TextField, Typography } from "@mui/material"
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -11,8 +11,9 @@ import CustomDatePicker from "../../components/datePicker"
 import { courseApi } from "../../utils/api";
 
 import { DurationList, LanguageList, LevelList, SkillsList, SubjectList, TypeList } from "../../data"
+import { useParams, useSearchParams } from "react-router-dom";
 
-const AddCoursePage = () => {
+const CoursePage = () => {
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
@@ -36,6 +37,7 @@ const AddCoursePage = () => {
     const [startDateError, setStartDateError] = useState(false);
     const [priceError, setPriceError] = useState(false);
 
+    const { id } = useParams()
 
     const onSelect = (files) =>{
         setFiles(files);
@@ -83,11 +85,43 @@ const AddCoursePage = () => {
         }
     }
 
+    const fetchCourse = async() => {
+        try {
+            let {data} = await courseApi.get(`/course/one/${id}`);
+
+            console.log(data.payload);
+            setTitle(data.payload.name);
+            setDesc(data.payload.desc);
+            setSubject(data.payload.subject);  
+            setLanguage(data.payload.language);
+            setType(data.payload.type);
+            setLevel(data.payload.level);
+            setDuration(data.payload.duration);
+            setSkills(data.payload.skills);
+            setStartDate(dayjs(data.payload.start_date));
+            setPrice(data.payload.price);
+            setPublish(data.payload.published);
+            setFiles([data.payload.thumbnail]);
+
+            toast.success(data.message);
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        }
+    }
+
+    useEffect(() => {
+        if(id){
+            fetchCourse()
+        }
+    }, [])
+
+
+
     return (
         <>
             <div style={{width:'100%', padding:'20px', display:'flex', flexDirection:'column'}}>
                 <BreadCrumbs />
-                <FormCard title={"Course"} action={"Create"} onClick={handleSubmit}>
+                <FormCard title={"Course"} action={id ? "Update" : "Create"} onClick={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
                             <FormUploadArea 
@@ -135,6 +169,15 @@ const AddCoursePage = () => {
                                     <Typography variant="caption" display={descError ? 'block' : 'none'} color={"red"} gutterBottom>
                                         *{"Description is required"}
                                     </Typography>
+                                </Grid>
+                                <Grid item xs={12} lg={12}>
+                                    <CustomAutoComplete
+                                        multiple={true}
+                                        label={"Benefits"}
+                                        options={SkillsList}
+                                        value={skills}
+                                        setValue={setSkills}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
                                     <CustomAutoComplete
@@ -192,15 +235,6 @@ const AddCoursePage = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
-                                    <CustomAutoComplete
-                                        multiple={true}
-                                        label={"Benefits"}
-                                        options={SkillsList}
-                                        value={skills}
-                                        setValue={setSkills}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={6}>
                                     <CustomDatePicker
                                         label="Start Date"
                                         disablePast={true}
@@ -253,4 +287,4 @@ const AddCoursePage = () => {
     )
 }
 
-export default AddCoursePage;
+export default CoursePage;
