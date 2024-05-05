@@ -16,6 +16,7 @@ import './index.css'
 import CourseHomePage from './pages/coursemanagement/index.jsx'
 import CoursePage from './pages/coursemanagement/course.jsx'
 import LoginPage from './pages/coursemanagement/login.jsx'
+import RegisterPage from './pages/register.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,7 +25,7 @@ const router = createBrowserRouter(
       {/* Public Routes */}
       <Route index={ true } path='/' element={ <HomePage /> } />
       <Route path='/login' element={ <LoginPage /> } />
-      {/* <Route path='/register' element={ <RegisterPage /> } /> */}
+      <Route path='/register' element={ <RegisterPage /> } />
         
       {/* Private Routes */}
       <Route path='' element={ <PrivateRoute /> }>
