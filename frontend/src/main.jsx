@@ -15,7 +15,7 @@ import NotFoundPage from './pages/404.jsx'
 import './index.css'
 import CourseHomePage from './pages/coursemanagement/index.jsx'
 import CoursePage from './pages/coursemanagement/course.jsx'
-import LoginPage from './pages/coursemanagement/login.jsx'
+import LoginPage from './pages/login.jsx'
 import RegisterPage from './pages/register.jsx'
 
 const router = createBrowserRouter(
