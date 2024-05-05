@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
@@ -8,25 +8,19 @@ import { useEffect, useState } from 'react';
 
 const App = () => {
   const location = useLocation();
+  const [title, setTitle] = useState("Home");
   const [showHeader, setShowHeader] = useState(location.pathname === '/');
-  const { id } = useParams();
-  
+
   useEffect(() => {
     switch (location.pathname) {
       case '/':
-        document.title = `StudyStorm | Home`;
+        setTitle('Home');
         break;
-      case '/admin/courses':
-        document.title = `StudyStorm | Courses`;
+      case '/admin/course/add':
+        setTitle('Add Course');
         break;
-      case '/admin/courses/create':
-        document.title = `StudyStorm | Add Course`;
-        break;
-        case `/admin/courses/update/${id}`:
-          document.title = `StudyStorm | Update Course`;
-          break;
       default:
-        document.title = `StudyStorm | 404 Not Found`;
+        setTitle('404 Not Found');
         break;
     }
 
@@ -36,8 +30,8 @@ const App = () => {
       setShowHeader(true);
     }
 
-  }, [location.pathname]);
-
+    document.title = `StudyStorm | ${title}`;
+  }, [title]);
   return (
     <>
       <ToastContainer />

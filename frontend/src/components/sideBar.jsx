@@ -5,7 +5,7 @@ import { Link, useLocation  } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, List, CssBaseline, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, Tooltip, Menu, MenuItem, Avatar } from '@mui/material';
-import { HomeRounded, MenuRounded, MenuOpenRounded, AccountCircle, Login, Favorite, Public, MenuBook } from '@mui/icons-material';
+import { HomeRounded, MenuRounded, MenuOpenRounded, AccountCircle, Login, Favorite, Public } from '@mui/icons-material';
 import { IoTelescope } from "react-icons/io5";
 import { RiCameraLensLine } from "react-icons/ri";
 import { Image } from 'react-bootstrap';
@@ -156,14 +156,14 @@ export default function Sidebar() {
             </Tooltip>
           </ListItem></Link>
 
-          {userInfo && userInfo.userType === 'ROLE_ADMIN' &&
-          <Link to='/admin/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? 'Courses' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/course') ? sideBarStyles.active : ''}`}>
+          {userInfo && userInfo.role === 'ROLE_ADMIN' &&
+          <Link to='/admin/course/add' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'Home' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute === '/' ? sideBarStyles.active : ''}`}>
                 <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
+                  <HomeRounded />
                 </ListItemIcon>
-                <ListItemText primary={'Courses'} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </Tooltip>
           </ListItem></Link>

@@ -1,7 +1,7 @@
 import axios from "axios"; 
 
-const courseApi = axios.create({
-  baseURL : import.meta.env.VITE_COURSE_SERVER_URL+"api",
+const api = axios.create({
+  baseURL : import.meta.env.VITE_SERVER_URL,
 });
 
-export { courseApi };
+export default api;
