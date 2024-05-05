@@ -14,6 +14,9 @@ import NotFoundPage from './pages/404.jsx'
 
 import './index.css'
 import AddCoursePage from './pages/coursemanagement/addCourse.jsx'
+import RegisterPage from './pages/register.jsx'
+import LoginPage from './pages/login.jsx'
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,8 +24,8 @@ const router = createBrowserRouter(
       
       {/* Public Routes */}
       <Route index={ true } path='/' element={ <HomePage /> } />
-      {/* <Route path='/login' element={ <LoginPage /> } />
-      <Route path='/register' element={ <RegisterPage /> } /> */}
+      <Route path='/login' element={ <LoginPage /> } />
+      <Route path='/register' element={ <RegisterPage /> } />
         
       {/* Private Routes */}
       <Route path='' element={ <PrivateRoute /> }>
