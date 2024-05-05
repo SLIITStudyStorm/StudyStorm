@@ -19,10 +19,10 @@ const App = () => {
       case '/admin/courses':
         document.title = `StudyStorm | Courses`;
         break;
-      case '/admin/course/create':
+      case '/admin/courses/create':
         document.title = `StudyStorm | Add Course`;
         break;
-        case `/admin/course/update/${id}`:
+        case `/admin/courses/update/${id}`:
           document.title = `StudyStorm | Update Course`;
           break;
       default:
