@@ -11,20 +11,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Card } from "@mui/material";
+import {
+  Alert,
+  Card,
+ 
+} from "@mui/material";
+import axios from "axios";
+import { useState } from "react";
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center" {...props}>
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+
 
 const theme = createTheme({
   palette: {
@@ -35,13 +30,31 @@ const theme = createTheme({
 });
 
 export default function RegisterPage() {
-  const handleSubmit = (event) => {
+  const [responseData, setResponseData] = useState("");
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const data = new FormData(event.currentTarget);
-    console.log({
+    const requestData = {
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
       email: data.get("email"),
+      phoneNumber: data.get("phone"),
       password: data.get("password"),
-    });
+      confirmPassword: data.get("confirmPassword"),
+      roles: "ROLE_USER",
+    };
+
+    console.log(requestData);
+
+    const response = await axios.post(
+      "http://localhost:8080/v1/new",
+      requestData
+    );
+
+    console.log(response);
+    setResponseData(response.data);
   };
 
   return (
@@ -59,6 +72,16 @@ export default function RegisterPage() {
         }}
       >
         <CssBaseline />
+        {responseData && (
+          <Alert
+            severity={
+              responseData === "User added successfully" ? "success" : "error"
+            }
+            sx={{ marginBottom: 2 }}
+          >
+            {responseData}
+          </Alert>
+        )}
         <Card sx={{}}>
           <Box
             sx={{
@@ -138,13 +161,14 @@ export default function RegisterPage() {
                   <TextField
                     required
                     fullWidth
-                    name="comfirmPassword"
+                    name="confirmPassword"
                     label="Confirm Password"
                     type="password"
                     id="comfirmPassword"
                     autoComplete="new-password"
                   />
                 </Grid>
+
                 {/* <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
