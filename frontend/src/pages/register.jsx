@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -31,6 +32,8 @@ const theme = createTheme({
 
 export default function RegisterPage() {
   const [responseData, setResponseData] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -47,14 +50,29 @@ export default function RegisterPage() {
     };
 
     console.log(requestData);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/v1/new",
+        requestData
+      );
 
-    const response = await axios.post(
-      "http://localhost:8080/v1/new",
-      requestData
-    );
+      console.log(response);
+      setResponseData(response.data);
 
-    console.log(response);
-    setResponseData(response.data);
+      // go to login page
+      if (response.data === "User added successfully") {
+        navigate("/login");
+      }
+
+
+
+
+    } catch (error) {
+      console.error(error);
+      // handle error here
+    }
+
+
   };
 
   return (

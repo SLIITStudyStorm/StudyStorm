@@ -15,6 +15,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert, AlertTitle, Card } from "@mui/material";
 import { Toast } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -43,8 +44,11 @@ const theme = createTheme({
 });
 
 export default function LoginPage() {
+
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -67,6 +71,10 @@ export default function LoginPage() {
 
       setError(false);
       setSuccess(true);
+
+      // Redirect to home page
+      navigate("/");
+
 
     } catch (error) {
       // Handle error response, e.g., display error message
