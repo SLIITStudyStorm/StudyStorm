@@ -1,118 +1,39 @@
 import { useState } from "react";
-import axios from "axios";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Alert, AlertTitle } from "@mui/material";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#1976d2",
-    },
-  },
-});
+import SendOtp from "../components/user/sendOtp";
+import VerifyOTP from "../components/user/verifyOtp";
+import ChangePassword from "../components/user/changePassword";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Send a request to your backend API to handle forgot password
-      const response = await axios.post(
-        `http://localhost:8080/forgotPassword/verifyMail/${email}`
-      );
-      console.log("Password reset email sent!", response.data);
-      setSuccess(true);
-      setError(false);
-    } catch (error) {
-      console.error("Forgot password request failed!", error);
-      setSuccess(false);
-      setError(true);
-    }
-  };
+  const [sendOtpState, setSendOtpState] = useState(true);
+  const [verifyOtpState, setVerifyOtpState] = useState(false);
+  const [changePasswordState, setChangePasswordState] = useState(false);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container
-        component="main"
-        maxWidth="xs"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: "50px",
-        }}
-      >
-        <CssBaseline />
-        {error && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            User does not exist.
-          </Alert>
-        )}
-        {success && (
-          <Alert severity="success">
-            <AlertTitle>Success</AlertTitle>
-            Password reset email sent! Check your inbox.
-          </Alert>
-        )}
-        <Box
-          sx={{
-            marginTop: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Forgot Password
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, backgroundColor: "#1976d2", color: "#fff" }}
-            >
-              Send Reset Email
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/login" variant="body2">
-                  Back to Sign In
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+    <>
+      {sendOtpState && (
+        <SendOtp
+          email={email}
+          setEmail={setEmail}
+          setSendOtpState={setSendOtpState}
+          setVerifyOtpState={setVerifyOtpState}
+        />
+      )}
+
+      {verifyOtpState && (
+        <VerifyOTP
+          email={email}
+          setVerifyOtpState={setVerifyOtpState}
+          setChangePasswordState={setChangePasswordState}
+
+        />
+      )}
+      {changePasswordState && (
+        <ChangePassword
+          email={email}
+          setChangePasswordState={setChangePasswordState}
+        />
+      )}
+    </>
   );
 }
