@@ -21,6 +21,7 @@ import { Close } from "@mui/icons-material";
 const CoursePage = () => {
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
+    const [customCrumb, setCustomCrumb] = useState('');
     const [desc, setDesc] = useState('');
     const [subject, setSubject] = useState(null);
     const [skills, setSkills] = useState([]);
@@ -92,6 +93,7 @@ const CoursePage = () => {
             }
 
             toast.success(res.data.message);
+            setCustomCrumb(title)
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }
@@ -101,8 +103,8 @@ const CoursePage = () => {
         try {
             let {data} = await courseApi.get(`/course/one/${id}`);
 
-            console.log(data.payload);
             setTitle(data.payload.name);
+            setCustomCrumb(data.payload.name)
             setDesc(data.payload.desc);
             setSubject(data.payload.subject);  
             setLanguage(data.payload.language);
@@ -136,7 +138,7 @@ const CoursePage = () => {
     return (
         <>
             <div style={{width:'100%', padding:'20px', display:'flex', flexDirection:'column'}}>
-                <BreadCrumbs />
+                <BreadCrumbs customLast={true} customCrumb={customCrumb} />
                 <FormCard title={"Course"} action={id ? "Update" : "Create"} onClick={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
