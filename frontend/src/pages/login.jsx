@@ -16,10 +16,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert, AlertTitle, Card } from "@mui/material";
 import { Toast } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { setUserInfo } from "../slices/authSlice";
-
-
 
 const theme = createTheme({
   palette: {
@@ -30,7 +28,6 @@ const theme = createTheme({
 });
 
 export default function LoginPage() {
-
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -60,34 +57,33 @@ export default function LoginPage() {
       setSuccess(true);
 
       // Fetch user information using the token
-      
-    const userResponse = await axios.get("http://localhost:8080/v1/user", {
-      headers: {
-        Authorization: token,
-      }
-    });
 
-    console.log("User information", userResponse.data);
+      const userResponse = await axios.get("http://localhost:8080/v1/user", {
+        headers: {
+          Authorization: token,
+        },
+      });
 
-       // Extract user information from the response
-       const { firstName, lastName, email, phoneNumber,roles } = userResponse.data;
+      console.log("User information", userResponse.data);
 
-          // Dispatch setUserInfo action with user information
-    dispatch(
-      setUserInfo({
-        firstName,
-        lastName,
-        displayName : `${firstName} ${lastName}`,
-        email,
-        phoneNumber,
-        userType: roles
-      })
-    );
+      // Extract user information from the response
+      const { firstName, lastName, email, phoneNumber, roles } =
+        userResponse.data;
+
+      // Dispatch setUserInfo action with user information
+      dispatch(
+        setUserInfo({
+          firstName,
+          lastName,
+          displayName: `${firstName} ${lastName}`,
+          email,
+          phoneNumber,
+          userType: roles,
+        })
+      );
 
       // Redirect to home page
       navigate("/");
-
-
     } catch (error) {
       // Handle error response, e.g., display error message
       console.error("Login failed!", error);
@@ -123,7 +119,7 @@ export default function LoginPage() {
             Login successful!
           </Alert>
         )}
-      
+
         <Card sx={{}}>
           <Box
             sx={{
@@ -185,10 +181,15 @@ export default function LoginPage() {
               >
                 Sign In
               </Button>
-              <Grid container justifyContent="flex-end">
+              <Grid container justifyContent="space-between">
                 <Grid item>
                   <Link href="/register" variant="body2">
                     Don't have an account? Sign up
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="/forgotpassword" variant="body2">
+                    Forgot Password?
                   </Link>
                 </Grid>
               </Grid>
