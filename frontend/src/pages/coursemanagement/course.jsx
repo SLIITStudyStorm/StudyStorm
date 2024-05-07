@@ -68,7 +68,7 @@ const CoursePage = () => {
             }
             
             let start = dayjs(startDate).add(1, 'day').toDate().toISOString().split('T')[0]
-
+            
             const formData = new FormData();
             formData.append('name', title);
             formData.append('desc', desc);

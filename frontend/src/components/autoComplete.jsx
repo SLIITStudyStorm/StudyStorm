@@ -1,6 +1,6 @@
 import { Autocomplete, TextField, Typography } from "@mui/material";
 
-const CustomAutoComplete = ({options, label, multiple = false, errorMsg, isError, setError, value, setValue}) => {
+const CustomAutoComplete = ({options, label, multiple = false, errorMsg, isError, setError = () => {}, value, setValue}) => {
     return(
         <>
             <Autocomplete

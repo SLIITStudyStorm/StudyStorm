@@ -42,7 +42,7 @@ const App = () => {
     <>
       <ToastContainer />
       <Container className='mw-100 py-0 px-0' id="main" style={{position:'fixed', minHeight:'100vh', width:'100%', height:'100%', overflow:'auto', display:'flex', background:'rgb(246 245 238)'}}>
-        {/* {showHeader ? <Header /> : <Sidebar />}         */}
+        {showHeader ? <Header /> : <Sidebar />}        
         <Outlet />
       </Container>
     </>

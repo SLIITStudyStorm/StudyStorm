@@ -19,6 +19,7 @@ import LoginPage from './pages/login.jsx'
 import RegisterPage from './pages/register.jsx'
 import AdminRegisterPage from './pages/admin/register.jsx'
 import ForgotPasswordPage from './pages/forgotPassword.jsx'
+import CourseContentPage from './pages/coursemanagement/courseContent.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,6 +41,8 @@ const router = createBrowserRouter(
           <Route path='/admin/courses' element={ <CourseHomePage /> } />
           <Route path='/admin/courses/create' element={ <CoursePage /> } />
           <Route path='/admin/courses/update/:id' element={ <CoursePage /> } />
+          <Route path='/admin/courses/:id' element={ <CourseContentPage /> } />
+
           <Route path='/admin/users/create' element={ <AdminRegisterPage /> } />
         </Route>
       </Route>

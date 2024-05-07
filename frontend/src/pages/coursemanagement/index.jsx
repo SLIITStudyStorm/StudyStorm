@@ -72,7 +72,7 @@ const CourseHomePage = () => {
                                 <CardContent>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm={3} md={12} lg={3}>
-                                            <img src={import.meta.env.VITE_COURSE_SERVER_URL+course.thumbnail} alt={course.title} style={{width:'100%', height:'auto', borderRadius:'5px'}} />
+                                            <img src={import.meta.env.VITE_COURSE_SERVER_URL+course.thumbnail} onError={(event) => { event.target.src = "/default.png" }}  alt={course.title} style={{width:'100%', height:'auto', maxHeight:'350px', objectFit:'cover', borderRadius:'5px'}} />
                                         </Grid>
                                         <Grid item xs={12} sm={9} md={12} lg={9}>
                                             <Grid container spacing={2}>
