@@ -1,5 +1,3 @@
-import { useState } from "react";
-import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,29 +11,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Alert, AlertTitle, Card } from "@mui/material";
-import { Toast } from "react-bootstrap";
+import {
+  Alert,
+  Card,
+ 
+} from "@mui/material";
+import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { setUserInfo } from "../slices/authSlice";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+
 
 const theme = createTheme({
   palette: {
@@ -45,71 +30,49 @@ const theme = createTheme({
   },
 });
 
-export default function LoginPage() {
-
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
+export default function AdminRegisterPage() {
+  const [responseData, setResponseData] = useState("");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+
+    const data = new FormData(event.currentTarget);
     const requestData = {
-      username: formData.get("email"),
-      password: formData.get("password"),
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      email: data.get("email"),
+      phoneNumber: data.get("phone"),
+      password: data.get("password"),
+      confirmPassword: data.get("confirmPassword"),
+      roles: "ROLE_USER",
     };
 
+    console.log(requestData);
     try {
       const response = await axios.post(
-        "http://localhost:8080/v1/login",
+        "http://localhost:8080/v1/new",
         requestData
       );
 
-      // Handle successful login response, e.g., redirect or store token
-      console.log("Login successful!", response.data);
-      const token = response.data.accessToken;
-      localStorage.setItem("token", token);
+      console.log(response);
+      setResponseData(response.data);
 
-      setError(false);
-      setSuccess(true);
-
-      // Fetch user information using the token
-      
-    const userResponse = await axios.get("http://localhost:8080/v1/user", {
-      headers: {
-        Authorization: token,
+      // go to login page
+      if (response.data === "User added successfully") {
+        navigate("/login");
       }
-    });
 
-    console.log("User information", userResponse.data);
 
-       // Extract user information from the response
-       const { firstName, lastName, email, phoneNumber,roles } = userResponse.data;
-
-          // Dispatch setUserInfo action with user information
-    dispatch(
-      setUserInfo({
-        firstName,
-        lastName,
-        displayName : `${firstName} ${lastName}`,
-        email,
-        phoneNumber,
-        userType: roles
-      })
-    );
-
-      // Redirect to home page
-      navigate("/");
 
 
     } catch (error) {
-      // Handle error response, e.g., display error message
-      console.error("Login failed!", error);
-      setSuccess(false);
-      setError(true);
+      console.error(error);
+      // handle error here
     }
+
+
   };
 
   return (
@@ -118,28 +81,25 @@ export default function LoginPage() {
         component="main"
         maxWidth="xs"
         sx={{
+          backgroundColor: "#f5f5f5",
+          borderRadius: "10px",
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
           justifyContent: "center",
-          backgroundColor: "#f5f5f5",
-          borderRadius: "10px",
         }}
       >
         <CssBaseline />
-        {error && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            Incorrect email or password
+        {responseData && (
+          <Alert
+            severity={
+              responseData === "User added successfully" ? "success" : "error"
+            }
+            sx={{ marginBottom: 2 }}
+          >
+            {responseData}
           </Alert>
         )}
-        {success && (
-          <Alert severity="success">
-            <AlertTitle>Success</AlertTitle>
-            Login successful!
-          </Alert>
-        )}
-      
         <Card sx={{}}>
           <Box
             sx={{
@@ -154,7 +114,7 @@ export default function LoginPage() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
-              Sign in
+              Sign up
             </Typography>
             <Box
               component="form"
@@ -163,6 +123,27 @@ export default function LoginPage() {
               sx={{ mt: 3 }}
             >
               <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -173,7 +154,16 @@ export default function LoginPage() {
                     autoComplete="email"
                   />
                 </Grid>
-
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="phone"
+                    label="Phone Number"
+                    name="phone"
+                    autoComplete="tel"
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -185,13 +175,24 @@ export default function LoginPage() {
                     autoComplete="new-password"
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    id="comfirmPassword"
+                    autoComplete="new-password"
+                  />
+                </Grid>
 
                 {/* <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
-            </Grid> */}
+                <FormControlLabel
+                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  label="I want to receive inspiration, marketing promotions and updates via email."
+                />
+              </Grid> */}
               </Grid>
               <Button
                 type="submit"
@@ -199,12 +200,12 @@ export default function LoginPage() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2, backgroundColor: "#1976d2", color: "#fff" }}
               >
-                Sign In
+                Sign Up
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
-                  <Link href="/register" variant="body2">
-                    Don't have an account? Sign up
+                  <Link href="/login" variant="body2">
+                    Already have an account? Sign in
                   </Link>
                 </Grid>
               </Grid>
