@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountDetailsForm() {
   const [user, setUser] = useState({});
@@ -32,6 +33,8 @@ export default function AccountDetailsForm() {
 
   const [changesMade, setChangesMade] = useState(false);
   const [passfiledsChanged, setPassfiledsChanged] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch user data from local storage once when component mounts
@@ -115,6 +118,8 @@ const passwordPayload = {
     try {
       const response = await axios.patch(`http://localhost:8080/v1/${url}`, payload);
       console.log(response);
+      localStorage.clear();
+      navigate("/login")
 
     } catch (error) {
       console.error(error);
