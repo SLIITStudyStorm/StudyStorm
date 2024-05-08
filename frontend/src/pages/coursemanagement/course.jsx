@@ -94,6 +94,7 @@ const CoursePage = () => {
 
             toast.success(res.data.message);
             setCustomCrumb(title)
+            navigate('/admin/courses')
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }

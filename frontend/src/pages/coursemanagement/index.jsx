@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Backdrop, Button, Card, CardActionArea, CardContent, CircularProgress, Dialog, DialogActions, DialogTitle, Grid, IconButton, Typography } from "@mui/material";
+import { Backdrop, Button, Card, CardActionArea, CardContent, CircularProgress, Dialog, DialogActions, DialogTitle, Grid, IconButton, Switch, Tooltip, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 
 import { courseApi } from "../../utils/api";
@@ -51,6 +51,19 @@ const CourseHomePage = () => {
         }
     }
 
+    const publish = async(course) => {
+        try {
+            setIsLoading(true);
+            let {data} = await courseApi.patch(`/course/publish/${course.course_id}`);
+            await fetchCourses();
+            toast.success(data.message);
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchCourses()
     },[])
@@ -72,7 +85,7 @@ const CourseHomePage = () => {
                                 <CardContent>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm={3} md={12} lg={3}>
-                                            <img src={import.meta.env.VITE_COURSE_SERVER_URL+course.thumbnail} onError={(event) => { event.target.src = "/default.png" }}  alt={course.title} style={{width:'100%', height:'auto', maxHeight:'350px', objectFit:'cover', borderRadius:'5px'}} />
+                                            <img src={import.meta.env.VITE_COURSE_SERVER_URL+course.thumbnail} onError={(event) => { event.target.src = "/default.png" }}  alt={course.title} style={{width:'100%', height:'auto', maxHeight:'350px', objectFit:'contain', borderRadius:'5px'}} />
                                         </Grid>
                                         <Grid item xs={12} sm={9} md={12} lg={9}>
                                             <Grid container spacing={2}>
@@ -86,6 +99,9 @@ const CourseHomePage = () => {
                                                     <IconButton onClick={() => promptDelete(course.course_id)} >
                                                         <Delete />
                                                     </IconButton>
+                                                    <Tooltip title="Publish" placement="top" arrow>
+                                                        <Switch checked={course.published} onChange={() => publish(course)} />
+                                                    </Tooltip>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={12}>        
                                                     <Typography fontSize={25}>{course.name}</Typography>
