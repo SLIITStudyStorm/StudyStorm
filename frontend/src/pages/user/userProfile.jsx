@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 
 export default function UserProfilePage() {
   return (
-    <Container style={{ marginTop: '20px' , marginLeft:'20px',marginRight:'20px' }}>
+    <Container style={{ marginTop: '100px' , marginLeft:'auto',marginRight:'auto' }}>
       <Grid container spacing={3}>
         <Grid item md={3} xs={12}>
           <AccountInfo />
