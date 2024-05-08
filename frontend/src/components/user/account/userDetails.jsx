@@ -79,6 +79,18 @@ const passwordPayload = {
   const handleClose = () => {
     setOpen(false);
     setUrl("");
+
+    setFirstName(user.firstName);
+    setLastName(user.lastName);
+    setEmail(user.email);
+    setPhone(user.phoneNumber);
+    setCurrentPassword("");
+    setNewPassword(""); 
+    setConfirmPassword("");
+
+    setChangesMade(false);
+    setPassfiledsChanged(false);
+
     setPayload({});
   };
 
@@ -264,13 +276,12 @@ const passwordPayload = {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {"Are you sure you want to save the changes?"}
+            {"Are you sure ?"}
           </DialogTitle>
           <DialogContent>
-            {/* <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
-          </DialogContentText> */}
+            <DialogContentText id="alert-dialog-description">
+            After changing the details, you will have to login again.
+          </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>No</Button>
