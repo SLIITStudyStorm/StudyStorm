@@ -1,10 +1,14 @@
-import axios from "axios"; 
+import axios from "axios";
 
 const courseApi = axios.create({
-  baseURL : import.meta.env.VITE_COURSE_SERVER_URL+"api",
+  baseURL: import.meta.env.VITE_COURSE_SERVER_URL + "api",
   headers: {
-      Authorization  : 'Bearer '+localStorage.getItem("token")
+    Authorization: "Bearer " + localStorage.getItem("token"),
   },
 });
 
-export { courseApi };
+const authApi = axios.create({
+  baseURL: import.meta.env.VITE_AUTH_SERVER_URL + "api",
+});
+
+export { courseApi, authApi };

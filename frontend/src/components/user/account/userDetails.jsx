@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -9,11 +9,68 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Grid from "@mui/material/Grid";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import axios from "axios";
 
 export default function AccountDetailsForm() {
+  const [user, setUser] = useState({});
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [changesMade, setChangesMade] = useState(false);
+  const [passfiledsChanged, setPassfiledsChanged] = useState(false);
+
+  useEffect(() => {
+    // Fetch user data from local storage once when component mounts
+    const userData = JSON.parse(localStorage.getItem("userInfo"));
+    setUser(userData);
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
+  const [payload, setPayload] = useState({});
+
+const profilePayload = {
+
+  firstName: firstName === "" ? user.firstName : firstName,
+  lastName: lastName === "" ? user.lastName : lastName,
+  email: email === "" ? user.email : email,
+  phoneNumber: phone === "" ? user.phoneNumber : phone,
+};
+
+const passwordPayload = {
+  currentPassword,
+  newPassword,
+  confirmPassword,
+};
+
+
+
+
+
+
+  const handleInputChange = () => {
+    // Set changesMade to true when any field changes
+    setChangesMade(true);
+  };
+
+  const handlePasswordChange = () => {
+    // Set passfiledsChanged to true when any password field changes
+    setPassfiledsChanged(true);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -21,21 +78,39 @@ export default function AccountDetailsForm() {
 
   const handleClose = () => {
     setOpen(false);
+    setUrl("");
+    setPayload({});
   };
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
     handleClickOpen();
-  }
+    setUrl(`user/${user.email}`);
+    setPayload(profilePayload);
+  };
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     handleClickOpen();
-  }
+    setUrl(`user/userProfile/updatePassword/${user.email}`);
+    setPayload(passwordPayload);
+  };
 
-  const handleDialogSubmit = (url) => {
+  const handleDialogSubmit = async(url,payload) => {
     handleClose();
-  }
+
+    // Make a PUT request to the server with the updated user data
+    try {
+      const response = await axios.patch(`http://localhost:8080/v1/${url}`, payload);
+      console.log(response);
+
+    } catch (error) {
+      console.error(error);
+    }
+
+
+
+  };
 
   return (
     <>
@@ -48,7 +123,11 @@ export default function AccountDetailsForm() {
               <FormControl fullWidth required>
                 <InputLabel>First name</InputLabel>
                 <OutlinedInput
-                  defaultValue="Sofia"
+                  value={firstName === "" ? user.firstName : firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    handleInputChange();
+                  }}
                   label="First name"
                   name="firstName"
                 />
@@ -58,7 +137,11 @@ export default function AccountDetailsForm() {
               <FormControl fullWidth required>
                 <InputLabel>Last name</InputLabel>
                 <OutlinedInput
-                  defaultValue="Rivers"
+                  value={lastName === "" ? user.lastName : lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    handleInputChange();
+                  }}
                   label="Last name"
                   name="lastName"
                 />
@@ -68,7 +151,11 @@ export default function AccountDetailsForm() {
               <FormControl fullWidth required>
                 <InputLabel>Email address</InputLabel>
                 <OutlinedInput
-                  defaultValue="sofia@devias.io"
+                  value={email === "" ? user.email : email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    handleInputChange();
+                  }}
                   label="Email address"
                   name="email"
                 />
@@ -77,20 +164,34 @@ export default function AccountDetailsForm() {
             <Grid item md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Phone number</InputLabel>
-                <OutlinedInput label="Phone number" name="phone" type="tel" />
+                <OutlinedInput
+                  label="Phone number"
+                  name="phone"
+                  type="tel"
+                  value={phone === "" ? user.phoneNumber : phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    handleInputChange();
+                  }}
+                />
               </FormControl>
             </Grid>
           </Grid>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: "flex-end" }}>
-          <Button variant="contained" type="submit" onClick={handleProfileSubmit}>
+          <Button
+            variant="contained"
+            type="submit"
+            onClick={handleProfileSubmit}
+            disabled={!changesMade}
+          >
             Save Profile
           </Button>
         </CardActions>
       </Card>
 
-      <Card sx={{mt:2}}>
+      <Card sx={{ mt: 2 }}>
         <CardHeader title="Change Password" />
         <Divider />
         <CardContent>
@@ -102,6 +203,11 @@ export default function AccountDetailsForm() {
                   label="Current password"
                   name="currentPassword"
                   type="password"
+                  value={currentPassword}
+                  onChange={(e) => {
+                    setCurrentPassword(e.target.value);
+                    handlePasswordChange();
+                  }}
                 />
               </FormControl>
             </Grid>
@@ -112,6 +218,11 @@ export default function AccountDetailsForm() {
                   label="New password"
                   name="newPassword"
                   type="password"
+                  value={newPassword}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    handlePasswordChange();
+                  }}
                 />
               </FormControl>
             </Grid>
@@ -122,6 +233,11 @@ export default function AccountDetailsForm() {
                   label="Confirm password"
                   name="confirmPassword"
                   type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    handlePasswordChange();
+                  }}
                 />
               </FormControl>
             </Grid>
@@ -129,38 +245,41 @@ export default function AccountDetailsForm() {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: "flex-end" }}>
-          <Button variant="contained" type="submit" onClick={handlePasswordSubmit}>
+          <Button
+            variant="contained"
+            type="submit"
+            onClick={handlePasswordSubmit}
+            disabled={!passfiledsChanged}
+          >
             Save Password
           </Button>
         </CardActions>
       </Card>
 
-
       <React.Fragment>
-    
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to save the changes?"}
-        </DialogTitle>
-        <DialogContent>
-          {/* <DialogContentText id="alert-dialog-description">
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Are you sure you want to save the changes?"}
+          </DialogTitle>
+          <DialogContent>
+            {/* <DialogContentText id="alert-dialog-description">
             Let Google help apps determine location. This means sending anonymous
             location data to Google, even when no apps are running.
           </DialogContentText> */}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>No</Button>
-          <Button onClick={()=>handleDialogSubmit(url)} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </React.Fragment>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>No</Button>
+            <Button onClick={() => handleDialogSubmit(url,payload)} autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </React.Fragment>
     </>
   );
 }
