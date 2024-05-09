@@ -14,13 +14,15 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   Alert,
   Card,
- 
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
+import { authApi } from "../../utils/api";
 
 const theme = createTheme({
   palette: {
@@ -32,6 +34,7 @@ const theme = createTheme({
 
 export default function AdminRegisterPage() {
   const [responseData, setResponseData] = useState("");
+  const [role, setRole] = useState("ROLE_LEARNER");
 
   const navigate = useNavigate();
 
@@ -46,15 +49,12 @@ export default function AdminRegisterPage() {
       phoneNumber: data.get("phone"),
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
-      roles: "ROLE_USER",
+      roles: role,
     };
 
     console.log(requestData);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/v1/new",
-        requestData
-      );
+      const response = await authApi.post(`v1/new`, requestData);
 
       console.log(response);
       setResponseData(response.data);
@@ -63,23 +63,17 @@ export default function AdminRegisterPage() {
       if (response.data === "User added successfully") {
         navigate("/login");
       }
-
-
-
-
     } catch (error) {
       console.error(error);
       // handle error here
     }
-
-
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container
         component="main"
-        maxWidth="xs"
+        maxWidth="lg"
         sx={{
           backgroundColor: "#f5f5f5",
           borderRadius: "10px",
@@ -114,7 +108,7 @@ export default function AdminRegisterPage() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
-              Sign up
+              Register User
             </Typography>
             <Box
               component="form"
@@ -164,7 +158,7 @@ export default function AdminRegisterPage() {
                     autoComplete="tel"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
@@ -175,7 +169,7 @@ export default function AdminRegisterPage() {
                     autoComplete="new-password"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
@@ -186,32 +180,34 @@ export default function AdminRegisterPage() {
                     autoComplete="new-password"
                   />
                 </Grid>
-
-                {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid> */}
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Age"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    >
+                      <MenuItem value="ROLE_ADMIN">Admin</MenuItem>
+                      <MenuItem value="ROLE_LEARNER">Learner </MenuItem>
+                      <MenuItem value="ROLE_INSTRUCTOR">Instructor</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
               <Button
                 type="submit"
-                fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, backgroundColor: "#1976d2", color: "#fff" }}
               >
-                Sign Up
+                Add User
               </Button>
-              <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <Link href="/login" variant="body2">
-                    Already have an account? Sign in
-                  </Link>
-                </Grid>
-              </Grid>
             </Box>
           </Box>
         </Card>
+
         {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
     </ThemeProvider>

@@ -14,6 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Alert, AlertTitle} from '@mui/material';
+import { authApi } from '../../utils/api';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +36,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
     try {
       const otpValue = otp.join('');
       // Make an API call to verify OTP
-      const response = await axios.post(`http://localhost:8080/forgotPassword/verifyOtp/${otpValue}/${email}`);
+      const response = await authApi.post(`/forgotPassword/verifyOtp/${otpValue}/${email}`);
 
       console.log('OTP verification successful!', response.data);
 
@@ -135,7 +136,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Button onClick={()=>{
-                       axios.post(`http://localhost:8080/forgotPassword/verifyMail/${email}`)
+                       authApi.post(`/forgotPassword/verifyMail/${email}`)
                        .then((response) => {
                          console.log('OTP sent successfully!', response.data);
                        })

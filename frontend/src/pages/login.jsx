@@ -18,6 +18,7 @@ import { Toast } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../slices/authSlice";
+import { authApi } from "../utils/api";
 
 const theme = createTheme({
   palette: {
@@ -43,11 +44,8 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/v1/login",
-        requestData
-      );
-
+      const response = await authApi.post(`/v1/login`, requestData)
+       
       // Handle successful login response, e.g., redirect or store token
       console.log("Login successful!", response.data);
       const token = response.data.accessToken;
@@ -58,7 +56,7 @@ export default function LoginPage() {
 
       // Fetch user information using the token
 
-      const userResponse = await axios.get("http://localhost:8080/v1/user", {
+      const userResponse = await authApi.get(`/v1/user`, {
         headers: {
           Authorization: token,
         },

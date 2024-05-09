@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert, AlertTitle } from "@mui/material";
+import { authApi } from "../../utils/api";
 
 const theme = createTheme({
   palette: {
@@ -29,9 +30,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
     event.preventDefault();
     try {
       // Send a request to your backend API to handle forgot password
-      const response = await axios.post(
-        `http://localhost:8080/forgotPassword/verifyMail/${email}`
-      );
+      const response = await authApi.post(`/forgotPassword/verifyMail/${email}`);
       console.log("Password reset email sent!", response.data);
       setSuccess(true);
       setError(false);

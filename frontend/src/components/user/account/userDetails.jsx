@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../../../utils/api";
 
 export default function AccountDetailsForm() {
   const [user, setUser] = useState({});
@@ -116,7 +117,7 @@ const passwordPayload = {
 
     // Make a PUT request to the server with the updated user data
     try {
-      const response = await axios.patch(`http://localhost:8080/v1/${url}`, payload);
+      const response = await authApi.patch(`/v1/${url}`, payload)
       console.log(response);
       localStorage.clear();
       navigate("/login")

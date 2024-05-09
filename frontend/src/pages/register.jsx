@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../utils/api";
 
 
 
@@ -51,10 +52,7 @@ export default function RegisterPage() {
 
     console.log(requestData);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/v1/new",
-        requestData
-      );
+      const response = await authApi.post(`v1/new`, requestData);
 
       console.log(response);
       setResponseData(response.data);

@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Alert, AlertTitle } from "@mui/material";
+import { authApi } from "../../utils/api";
 
 const theme = createTheme({
   palette: {
@@ -35,10 +36,7 @@ export default function ChangePassword({ email, setChangePasswordState }) {
     event.preventDefault();
     try {
       // Make an API call to change password
-      const response = await axios.post(
-        `http://localhost:8080/forgotPassword/changePassword/${email}`,
-        passwords
-      );
+      const response = await authApi.post(`/forgotPassword/changePassword/${email}`,passwords)
 
       console.log("Password change successful!", response.data);
 

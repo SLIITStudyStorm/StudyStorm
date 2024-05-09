@@ -8,7 +8,7 @@ const courseApi = axios.create({
 });
 
 const authApi = axios.create({
-  baseURL: import.meta.env.VITE_AUTH_SERVER_URL + "api",
+  baseURL: `${import.meta.env.VITE_AUTH_SERVER_URL}/`,
 });
 
 export { courseApi, authApi };
