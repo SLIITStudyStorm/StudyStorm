@@ -90,9 +90,6 @@ const CourseHomePage = () => {
                                         <Grid item xs={12} sm={9} md={12} lg={9}>
                                             <Grid container spacing={2}>
                                                 <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
-                                                    <IconButton onClick={() => navigate(`./${course.course_id}`)} >
-                                                        <RemoveRedEye />
-                                                    </IconButton>
                                                     <IconButton onClick={() => navigate(`./update/${course.course_id}`)} >
                                                         <Edit />
                                                     </IconButton>
@@ -104,7 +101,7 @@ const CourseHomePage = () => {
                                                     </Tooltip>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={12}>        
-                                                    <Typography fontSize={25}>{course.name}</Typography>
+                                                    <Typography fontSize={25}  onClick={() => navigate(`./${course.course_id}`)} style={{cursor:'pointer'}}>{course.name}</Typography>
                                                     <p>{course.desc}</p>
                                                     <p>Start Date: {new Date(course.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                                     <br />
