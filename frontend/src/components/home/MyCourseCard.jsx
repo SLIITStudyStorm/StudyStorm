@@ -1,8 +1,29 @@
 import React from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
+import { confirmAlert } from 'react-confirm-alert'; // Import the confirmation dialog library
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import confirmation dialog styles
 
-const MyCourseCard = ({ course, onViewDetails, onDelete }) => {
+const MyCourseCard = ({ course, onDelete }) => {
+
+  const handleDeleteClick = () => {
+    // Show confirmation dialog
+    confirmAlert({
+      title: 'Confirm deletion',
+      message: 'Are you sure you want to delete this enrollment?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => onDelete(course.course_id) // Pass courseId to onDelete function
+        },
+        {
+          label: 'No',
+          onClick: () => {} // Do nothing if "No" is clicked
+        }
+      ]
+    });
+  };
+
   return (
     <Grid item xs={12} md={6} lg={12}>
       <Card elevation={1} style={{ width: '100%', display: 'flex', flexDirection: 'column', padding: '20px', border: '1px solid #f3d607', borderRadius: '5px', margin: '0px 0px' }}>
@@ -20,7 +41,7 @@ const MyCourseCard = ({ course, onViewDetails, onDelete }) => {
             <Grid item xs={12} sm={9} md={12} lg={9}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
-                  <IconButton onClick={() => onDelete(course.id)}>
+                  <IconButton onClick={handleDeleteClick}>
                     <Delete />
                   </IconButton>
                   <IconButton onClick={() => onViewDetails(course.course_id)}>
