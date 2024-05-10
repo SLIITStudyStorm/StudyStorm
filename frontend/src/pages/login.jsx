@@ -19,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../slices/authSlice";
 import { authApi } from "../utils/api";
+import { toast } from "react-toastify";
+
 
 const theme = createTheme({
   palette: {
@@ -80,11 +82,13 @@ export default function LoginPage() {
         })
       );
 
+      toast.success("Login successful!");
       // Redirect to home page
       navigate("/");
     } catch (error) {
       // Handle error response, e.g., display error message
       console.error("Login failed!", error);
+      toast.error(error.response?.data?.message || error.message);
       setSuccess(false);
       setError(true);
     }
@@ -105,7 +109,7 @@ export default function LoginPage() {
         }}
       >
         <CssBaseline />
-        {error && (
+        {/* {error && (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
             Incorrect email or password
@@ -116,7 +120,7 @@ export default function LoginPage() {
             <AlertTitle>Success</AlertTitle>
             Login successful!
           </Alert>
-        )}
+        )} */}
 
         <Card sx={{}}>
           <Box

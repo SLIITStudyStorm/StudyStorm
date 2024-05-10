@@ -47,7 +47,7 @@ const HomePage = () => {
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{ mt: 8 }}>
       <Hero />
       <Typography variant="h4" sx={{ mb: 2 }}>
         Popular Courses
@@ -66,7 +66,7 @@ const HomePage = () => {
             </InputAdornment>
           ),
         }}
-        sx={{ mb: 2 }}
+        sx={{ mb: 5,mt: 2}}
       />
       <Grid container spacing={2}>
         {isLoading ? (

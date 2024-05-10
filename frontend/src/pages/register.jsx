@@ -10,6 +10,8 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { toast } from "react-toastify";
+
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   Alert,
@@ -59,6 +61,7 @@ export default function RegisterPage() {
 
       // go to login page
       if (response.data === "User added successfully") {
+        toast.success("User added successfully");
         navigate("/login");
       }
 
@@ -66,6 +69,7 @@ export default function RegisterPage() {
 
 
     } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
       console.error(error);
       // handle error here
     }
@@ -85,10 +89,11 @@ export default function RegisterPage() {
           flexDirection: "column",
           minHeight: "100vh",
           justifyContent: "center",
+          marginTop: 5,
         }}
       >
         <CssBaseline />
-        {responseData && (
+        {/* {responseData && (
           <Alert
             severity={
               responseData === "User added successfully" ? "success" : "error"
@@ -97,7 +102,7 @@ export default function RegisterPage() {
           >
             {responseData}
           </Alert>
-        )}
+        )} */}
         <Card sx={{}}>
           <Box
             sx={{
@@ -162,7 +167,7 @@ export default function RegisterPage() {
                     autoComplete="tel"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
@@ -173,7 +178,7 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth

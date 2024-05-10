@@ -14,6 +14,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Alert, AlertTitle } from "@mui/material";
 import { authApi } from "../../utils/api";
+import { toast } from "react-toastify";
+
 
 const theme = createTheme({
   palette: {
@@ -49,9 +51,11 @@ export default function ChangePassword({ email, setChangePasswordState }) {
       });
 
       setChangePasswordState(false);
+      toast.success("Password change successful! Please login with your new password.");
       navigate("/login");
     } catch (error) {
       console.error("Password change failed!", error);
+      toast.error(error.response?.data?.message || error.message);
       setError(true);
       setSuccess(false);
     }
@@ -75,7 +79,7 @@ export default function ChangePassword({ email, setChangePasswordState }) {
         }}
       >
         <CssBaseline />
-        {error && (
+        {/* {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             <AlertTitle>Error</AlertTitle>
             Password change failed. Please try again.
@@ -86,7 +90,7 @@ export default function ChangePassword({ email, setChangePasswordState }) {
             <AlertTitle>Success</AlertTitle>
             Password change successful!
           </Alert>
-        )}
+        )} */}
         <Box
           sx={{
             display: "flex",
