@@ -47,8 +47,8 @@ const CourseDetailsPage = () => {
   const handleGetStarted = () => {
     const userEmail = localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")).email : null;
     if (userEmail) {
-      const nextPageUrl = `/paymentPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
-      window.location.href = nextPageUrl;
+      const paymentUrl = `/paymentPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
+      window.location.href = paymentUrl;
     } else {
         toast.error("User email not found. Please log in to access this course.");
     }
