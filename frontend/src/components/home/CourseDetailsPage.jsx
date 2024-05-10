@@ -47,7 +47,7 @@ const CourseDetailsPage = () => {
   const handleGetStarted = () => {
     const userEmail = localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")).email : null;
     if (userEmail) {
-      const nextPageUrl = `/nextPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
+      const nextPageUrl = `/paymentPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
       window.location.href = nextPageUrl;
     } else {
       // Handle case when user email is not found in local storage

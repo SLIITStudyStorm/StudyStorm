@@ -39,7 +39,7 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
       <Route path="/course-details/:id" element ={<CourseDetailsPage />} /> 
-      <Route path="/nextPage" element={<CardPage />} />
+      <Route path="/paymentPage" element={<CardPage />} />
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
