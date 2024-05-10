@@ -75,7 +75,7 @@ export default function ChangePassword({ email, setChangePasswordState }) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          marginTop: "50px",
+          marginTop: "100px",
         }}
       >
         <CssBaseline />
