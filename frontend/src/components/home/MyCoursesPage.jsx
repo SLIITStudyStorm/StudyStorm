@@ -3,6 +3,8 @@ import { Container, Typography, Grid } from '@mui/material';
 import { learnerApi, courseApi } from "../../utils/api";
 import { toast } from "react-toastify";
 import MyCourseCard from './MyCourseCard'; // Importing the MyCourseCard component
+import { confirmAlert } from 'react-confirm-alert'; // Import the confirmation dialog library
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import confirmation dialog styles
 
 const MyCoursesPage = () => {
   const [userEmail, setUserEmail] = useState('');
@@ -43,6 +45,27 @@ const MyCoursesPage = () => {
     fetchEnrolledCourses();
   }, [userEmail]);
 
+  const handleDeleteEnrollment = async (courseId) => {
+    try {
+      console.log('Deleting enrollment:', courseId, userEmail);
+      const response = await learnerApi.delete(`/enrollment/cancel`, {
+        data: { courseId, userEmail }
+      });
+  
+      // Check if deletion was successful
+      if (response.status === 200) {
+        // Remove the course from the state
+        setCourses(courses.filter(course => course.course_id !== courseId));
+        toast.success("Enrollment cancelled successfully.");
+      } else {
+        toast.error("Failed to cancel enrollment.");
+      }
+    } catch (error) {
+      console.error('Error cancelling enrollment:', error);
+      toast.error("Failed to cancel enrollment.");
+    }
+  };
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
@@ -53,9 +76,9 @@ const MyCoursesPage = () => {
           Loading...
         </Typography>
       ) : courses.length > 0 ? (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ paddingTop: 10 } }>
           {courses.map((course, index) => (
-            <MyCourseCard key={index} course={course} />
+            <MyCourseCard key={index} course={course} onDelete={() => handleDeleteEnrollment(course.course_id)} />
           ))}
         </Grid>
       ) : (
