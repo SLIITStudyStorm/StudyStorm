@@ -89,7 +89,7 @@ export default function RegisterPage() {
           flexDirection: "column",
           minHeight: "100vh",
           justifyContent: "center",
-          marginTop: 8,
+          marginTop: 5,
         }}
       >
         <CssBaseline />
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                     autoComplete="tel"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
@@ -178,7 +178,7 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth

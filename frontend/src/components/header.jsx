@@ -69,6 +69,10 @@ const Header = () => {
     }
   };
 
+  const SignUp = () => {
+    navigate("/register");
+  };
+
   const logoutHandler = () => {
     setAnchorElUser(null);
     try {
@@ -444,6 +448,15 @@ const Header = () => {
               >
                 <FaSignInAlt />
                 &nbsp; Sign In
+              </Button>
+              <Button
+                onClick={SignUp}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+                sx={{ p: 1, color: "inherit", fontWeight: "inherit", marginLeft: 2, backgroundColor: "white", color: "#000000" }}
+              >
+                 Join Now
               </Button>
 
               {/* Notifications Dialog */}
