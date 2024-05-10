@@ -10,5 +10,8 @@ const courseApi = axios.create({
 const authApi = axios.create({
   baseURL: `${import.meta.env.VITE_AUTH_SERVER_URL}/`,
 });
+const learnerApi = axios.create({
+  baseURL: `${import.meta.env.VITE_LEARNER_SERVER_URL}/`,
+});
 
-export { courseApi, authApi };
+export { courseApi, authApi, learnerApi };

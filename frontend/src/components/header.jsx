@@ -148,11 +148,11 @@ const Header = () => {
                                 APOD
                             </Button>
                             <Button
-                                onClick={() => {navigate('/mars')}}
+                                onClick={() => {navigate('/my-courses')}}
                                 sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
                                 className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
                             >
-                                Mars
+                                My Courses
                             </Button>
                             <Button
                                 onClick={() => {navigate('/favourites')}}
@@ -194,11 +194,11 @@ const Header = () => {
                                 APOD
                             </Button>
                             <Button
-                                onClick={() => {navigate('/mars')}}
+                                onClick={() => {navigate('/my-courses')}}
                                 sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
                                 className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
                             >
-                                Mars
+                                My Courses
                             </Button>
                             <Button
                                 onClick={() => {navigate('/favourites')}}

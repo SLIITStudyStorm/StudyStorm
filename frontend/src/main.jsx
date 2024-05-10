@@ -29,6 +29,7 @@ import CourseContentPage from "./pages/coursemanagement/courseContent.jsx";
 import UserProfilePage from "./pages/user/userProfile.jsx";
 import CourseDetailsPage from "./components/home/CourseDetailsPage.jsx";
 import CardPage from "./components/home/card.jsx";
+import MyCoursesPage from "./components/home/MyCoursesPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,6 +41,7 @@ const router = createBrowserRouter(
       <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
       <Route path="/course-details/:id" element ={<CourseDetailsPage />} /> 
       <Route path="/paymentPage" element={<CardPage />} />
+      <Route path="/my-courses" element={<MyCoursesPage />} />
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
