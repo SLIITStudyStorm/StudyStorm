@@ -33,7 +33,6 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [loginUserInfo, setLoginUserInfo] = useState();
 
   const { userInfo } = useSelector((state) => state.auth);
   const [openNotifications, setOpenNotifications] = useState(false);
@@ -44,12 +43,7 @@ const Header = () => {
   const activeRoute = location.pathname;
 
   //   get user from local storage
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(user);
-
-    setLoginUserInfo(user);
-  }, []);
+ 
 
   const SignIn = async () => {
     try {
@@ -84,6 +78,11 @@ const Header = () => {
       console.log(error);
       toast.error(error.message || error.error);
     }
+  };
+
+  const profileHandle = () => {
+    setAnchorElUser(null);
+    navigate("/user/profile");
   };
 
   let timeout;
@@ -309,7 +308,7 @@ const Header = () => {
             >
               Home
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 navigate("/epic");
               }}
@@ -326,7 +325,7 @@ const Header = () => {
               }
             >
               EPIC
-            </Button>
+            </Button> */}
             <Button
               onClick={() => {
                 navigate("/apod");
@@ -343,9 +342,9 @@ const Header = () => {
                 isSticky ? headerStyles.navBtns : headerStyles.navBtns2
               }
             >
-              APOD
+              COURSES
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 navigate("/mars");
               }}
@@ -362,8 +361,8 @@ const Header = () => {
               }
             >
               Mars
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               onClick={() => {
                 navigate("/favourites");
               }}
@@ -380,7 +379,7 @@ const Header = () => {
               }
             >
               Favourites
-            </Button>
+            </Button> */}
           </Box>
           {userInfo ? (
             <Box sx={{ flexGrow: 0 }}>
@@ -418,7 +417,21 @@ const Header = () => {
                 >
                   <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
+                <MenuItem
+                  onClick={profileHandle}
+                  style={{ justifyContent: "center" }}
+                >
+                  <Typography textAlign="center">Profile</Typography>
+                </MenuItem>
               </Menu>
+              {userInfo && (
+                  <IconButton
+                    onClick={() => setOpenNotifications(true)} // Open notifications dialog
+                    sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
+                  >
+                    <NotificationsIcon />
+                  </IconButton>
+                )}
             </Box>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
@@ -432,16 +445,11 @@ const Header = () => {
                 <FaSignInAlt />
                 &nbsp; Sign In
               </Button>
-              {loginUserInfo && (
-                <IconButton
-                  onClick={() => setOpenNotifications(true)} // Open notifications dialog
-                  sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
-                >
-                  <NotificationsIcon />
-                </IconButton>
-              )}
 
               {/* Notifications Dialog */}
+            </Box>
+          )}
+        </Toolbar>
               <Dialog
                 open={openNotifications}
                 onClose={() => setOpenNotifications(false)}
@@ -459,9 +467,6 @@ const Header = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
-            </Box>
-          )}
-        </Toolbar>
       </Container>
     </AppBar>
   );

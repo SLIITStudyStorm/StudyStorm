@@ -66,7 +66,7 @@ const HomePage = () => {
             </InputAdornment>
           ),
         }}
-        sx={{ mb: 2 }}
+        sx={{ mb: 5,mt: 2}}
       />
       <Grid container spacing={2}>
         {isLoading ? (
