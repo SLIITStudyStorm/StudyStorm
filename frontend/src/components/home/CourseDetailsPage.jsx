@@ -50,8 +50,7 @@ const CourseDetailsPage = () => {
       const nextPageUrl = `/paymentPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
       window.location.href = nextPageUrl;
     } else {
-      // Handle case when user email is not found in local storage
-      // You can redirect to login or display a message
+        toast.error("User email not found. Please log in to access this course.");
     }
   };
 
