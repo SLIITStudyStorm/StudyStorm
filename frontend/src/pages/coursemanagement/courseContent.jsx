@@ -1,13 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BreadCrumbs from "../../components/breadcrubs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { courseApi } from "../../utils/api";
 import createFileObjectFromPath from "../../utils/createFileObjectFromPath";
 import dayjs from "dayjs";
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material";
-import { Add, Delete, Edit, ExpandMore, RemoveRedEye } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
+import { Add, AddCircle, AddCircleOutline, Delete, Edit, ExpandMore, RemoveRedEye } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import FormUploadArea from "../../components/fileUpload";
 
 const CourseContentPage = () => {
     
@@ -25,12 +26,14 @@ const CourseContentPage = () => {
     const [startDate, setStartDate] = useState(null);
     const [price, setPrice] = useState(0);
     const [published, setPublished] = useState(false);
+    const [contType, setContType] = useState('file')
 
     const [editable, setEditable] = useState(false);
     
     const [contentId, setContentId] = useState('');
     const [showDialog, setShowDialog] = useState(false);
     const [showDialog2, setShowDialog2] = useState(false);
+    const [showDialog3, setShowDialog3] = useState(false);
 
     const [courseContents, setCourseContents] = useState([]);
     const [contentTitle, setContentTitle] = useState('');
@@ -38,7 +41,15 @@ const CourseContentPage = () => {
     const [contentDesc, setContentDesc] = useState('');
     const [contentTitleError, setContentTitleError] = useState(false);
 
+    
+    const [contentDetailTitle, setContentDetailTitle] = useState('');
+    const [contentDetailDesc, setContentDetailDesc] = useState('');
+    const [attatchment, setAttatchment] = useState('');
+    const [attatchmentType, setAttatchmentType] = useState('');
+    const [contentDetailTitleError, setContentDetailTitleError] = useState(false);
+
     const { id } = useParams()
+    const navigate = useNavigate();
 
     const { userInfo } = useSelector((state) => state.auth);    
 
@@ -152,6 +163,15 @@ const CourseContentPage = () => {
         }
     }
 
+    const onSelect = (files) => {
+        setAttatchment(files);
+        setAttatchmentType(files.map((file) => file.name.split('.').pop()));
+    }
+
+    const handleContentDetailSubmit = async() => {
+        
+    }
+
     const promptDeleteContent = (course_id) => {
         setContentId(course_id)
         setShowDialog2(true);
@@ -187,7 +207,7 @@ const CourseContentPage = () => {
                 <BreadCrumbs customLast={true} customCrumb={customCrumb} />
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Card elevation={0} style={{width:'100%', background: 'transparent', display:'flex', flexDirection:'column', padding:'20px', margin:'0px 0px'}}>
+                        <Card elevation={0} style={{width:'100%', background: 'transparent', display:'flex', flexDirection:'column', padding:'0px 20px', margin:'0px 0px'}}>
                             <CardContent>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={3} md={12} lg={3}>
@@ -198,7 +218,7 @@ const CourseContentPage = () => {
                                             {
                                                 editable &&
                                                 <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
-                                                    <IconButton onClick={() => navigate(`./update/${id}`)} >
+                                                    <IconButton onClick={() => navigate(`../courses/update/${id}`)} >
                                                         <Edit />
                                                     </IconButton>
                                                     <Tooltip title="Publish" placement="top" arrow>
@@ -244,6 +264,14 @@ const CourseContentPage = () => {
                                     <Typography>
                                         {content.desc}
                                     </Typography>
+                                    <br />
+
+                                    {
+                                        editable &&
+                                        <>
+                                            <Button style={{margin:'5px', padding:'10px'}} onClick={() => setShowDialog3(true)}><AddCircleOutline /> &nbsp;&nbsp;&nbsp;Add Content</Button>
+                                        </>
+                                    }
                                 </AccordionDetails>
                             </Accordion>
                         ))}
@@ -264,12 +292,12 @@ const CourseContentPage = () => {
                 fullWidth
             >
                 <DialogTitle>
-                    New Course Content
+                    New Course Content Category
                 </DialogTitle>
                 <DialogContent style={{paddingTop:'5px'}}>
                     <TextField 
                         variant="outlined" size="small" 
-                        label="Content Title" placeholder="Content Title" 
+                        label="Content Category Title" placeholder="Content Category Title" 
                         fullWidth
                         value={contentTitle}
                         onChange={(e) => {
@@ -280,13 +308,13 @@ const CourseContentPage = () => {
                         }}
                     />
                     <Typography variant="caption" display={contentTitleError ? 'block' : 'none'} color={"red"} gutterBottom>
-                        *{"Content Title is required"}
+                        *{"Content Category Title is required"}
                     </Typography>
                     <br />
                     <br />
                     <TextField 
                         variant="outlined" size="small" 
-                        label="Content Sub Title" placeholder="Content Sub Title" 
+                        label="Content Category Sub Title" placeholder="Content Category Sub Title" 
                         fullWidth
                         value={contentSubTitle}
                         onChange={(e) => {
@@ -331,6 +359,88 @@ const CourseContentPage = () => {
                 <Button onClick={deleteCourseContent} autoFocus color="error">
                     Confirm
                 </Button>
+                </DialogActions>
+            </Dialog>
+            
+            <Dialog
+                open={showDialog3}
+                onClose={() => setShowDialog3(false)}
+                maxWidth={'md'}
+                fullWidth
+            >
+                <DialogTitle>
+                    New Course Content
+                </DialogTitle>
+                <DialogContent style={{paddingTop:'5px'}}>
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={contType}
+                        exclusive
+                        onChange={(e, newVal) => setContType(newVal)}
+                    >
+                        <ToggleButton value="file">File</ToggleButton>
+                        <ToggleButton value="link">Link</ToggleButton>
+                    </ToggleButtonGroup>
+                    <br />
+                    <br />                    
+                    <TextField 
+                        variant="outlined" size="small" 
+                        label="Content Title" placeholder="Content Title" 
+                        fullWidth
+                        value={contentDetailTitle}
+                        onChange={(e) => {
+                            setContentDetailTitle(e.target.value)
+
+                            if(!e.target.value) setContentDetailTitleError(true);
+                            else setContentDetailTitleError(false);
+                        }}
+                    />
+                    <Typography variant="caption" display={contentDetailTitleError ? 'block' : 'none'} color={"red"} gutterBottom>
+                        *{"Content Title is required"}
+                    </Typography>
+                    <br />
+                    <br />
+                    <TextField 
+                        variant="outlined" size="small" 
+                        label="Description" placeholder="Description" 
+                        fullWidth 
+                        multiline 
+                        minRows={2}
+                        value={contentDetailDesc}
+                        onChange={(e) => {
+                            setContentDetailDesc(e.target.value)
+                        }}
+                    />
+                    <br />
+                    <br />
+                    {contType == 'file' ?
+                    <FormUploadArea 
+                        accept="*" 
+                        multiple={true} 
+                        maxFileSize={1000000000000000}  
+                        label={"Files"}
+                        selectfunc={onSelect}
+                    />
+                    :
+                    <TextField 
+                        variant="outlined" size="small" 
+                        label="Link" placeholder="Link" 
+                        fullWidth
+                        value={attatchment}
+                        onChange={(e) => {
+                            setAttatchment([e.target.value])
+                            setAttatchmentType(['link'])
+                        }}
+                    />
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={() => setShowDialog3(false)}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleContentDetailSubmit} autoFocus color="success">
+                        Add
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

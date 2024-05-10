@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FileUpload } from 'primereact/fileupload';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
@@ -16,6 +16,41 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
 
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
+    const [otherFileTypeSrc, setOtherFileTypeSrc] = useState([
+        {
+            name: 'pdf',
+            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_pdf_filetype_icon_176234.png'
+        },
+        {
+            name: 'csv',
+            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png'
+        },
+        {
+            name: 'doc',
+            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_doc_filetype_icon_176249.png'
+        },
+        {
+            name: 'xlsx',
+            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_xls_filetype_icon_176238.png'
+        },
+        {
+            name: 'mp4',
+            src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
+        },
+        {
+            name: 'mkv',
+            src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
+        },
+        {
+            name: 'zip',
+            src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
+        },
+        {
+            name: 'rar',
+            src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
+        },
+    ]);
+    
     
     const onSelect = (e) => {
         let _totalSize = totalSize;
@@ -28,6 +63,10 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
         setTotalSize(_totalSize);
         selectfunc(files);
     };
+
+    const getFileType = (type) => {
+        return otherFileTypeSrc.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
+    }
 
     const onTemplateRemove = (file, callback) => {
         setTotalSize(totalSize - file.size);
@@ -44,7 +83,7 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
             {multiple ? 
                 <div className={`flex align-items-center flex-wrap`}>
                     <div className="flex align-items-center" style={{ width: '55%' }}>
-                        <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
+                        <img alt={file.name} role="presentation" src={accept == "image/*" ? file.objectURL : getFileType(file.name.split('.')[1])} width={100} />
                         <span className="flex flex-column text-left ml-3">
                             {file.name}
                             <small>{new Date().toLocaleDateString()}</small>
