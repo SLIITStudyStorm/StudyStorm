@@ -43,28 +43,27 @@ const Header = () => {
   const activeRoute = location.pathname;
 
   //   get user from local storage
- 
 
   const SignIn = async () => {
     try {
-    //   let { user } = await signInWithGoogle();
+      //   let { user } = await signInWithGoogle();
 
-    //   dispatch(
-    //     setUserInfo({
-    //       firstName: user.displayName.split(" ")[0],
-    //       lastName: user.displayName.split(" ")[1],
-    //       displayName: user.displayName,
-    //       email: user.email,
-    //       phoneNumber: user.phoneNumber,
-    //       photoURL: user.photoURL,
-    //     })
-    //   );
+      //   dispatch(
+      //     setUserInfo({
+      //       firstName: user.displayName.split(" ")[0],
+      //       lastName: user.displayName.split(" ")[1],
+      //       displayName: user.displayName,
+      //       email: user.email,
+      //       phoneNumber: user.phoneNumber,
+      //       photoURL: user.photoURL,
+      //     })
+      //   );
 
-    navigate("/login");
+      navigate("/login");
 
-    //   toast.success("Login Successful!");
+      //   toast.success("Login Successful!");
     } catch (error) {
-    //   toast.error("Login Failed!");
+      //   toast.error("Login Failed!");
       console.error(error);
     }
   };
@@ -157,138 +156,322 @@ const Header = () => {
             )}
           </Box>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={() => setShowDrawer(true)}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Offcanvas show={showDrawer} onHide={() => setShowDrawer(false)} style={{width:'200px'}}>
-                            <Offcanvas.Body>
-                            <Button
-                                onClick={() => {navigate('/');scrollToElement('top')}}
-                                sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                Home
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/epic')}}
-                                sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                EPIC
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/apod')}}
-                                sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                APOD
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/my-courses')}}
-                                sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                My Courses
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/favourites')}}
-                                sx={{ my: 2, px: 1, mx: 1, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                Favourites
-                            </Button>
-                            </Offcanvas.Body>
-                        </Offcanvas>
-                    </Box>
-                    <Box sx={{display: { xs: "flex", md: "none", cursor:'pointer' }}} style={{width:'100%', justifyContent:'center'}}>   
-                        {isSticky? 
-                            <img src="/LogoBig2.png" width='150px' onClick={() => navigate('/')}/> 
-                        :
-                            <img src="/LogoBig1.png" width='150px' onClick={() => navigate('/')}/> 
-                        }
-                    </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent:'center' }}>
-                            <Button
-                                onClick={() => {navigate('/');scrollToElement('top')}}
-                                sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                Home
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/epic')}}
-                                sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                EPIC
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/apod')}}
-                                sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                APOD
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/my-courses')}}
-                                sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                My Courses
-                            </Button>
-                            <Button
-                                onClick={() => {navigate('/favourites')}}
-                                sx={{ my: 2, px: 3, mx: 2, color: "inherit", fontWeight:'inherit', display: "block" }}
-                                className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} 
-                            >
-                                Favourites
-                            </Button>
-                    </Box>
-                    {userInfo ? 
-                    <Box sx={{ flexGrow: 0 }}>
-                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            {userInfo.photoURL ? <Avatar alt={userInfo.displayName} src={userInfo.photoURL} sx={!open ? { width: 24, height: 24 } : {}} style={{ transition: 'all .2s ease-in-out'}} /> : <AccountCircle />}
-                        </IconButton>
-                        <Menu
-                            sx={{ mt: "45px", textAlign:'center' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            <MenuItem onClick={logoutHandler} style={{justifyContent:'center'}}>
-                                <Typography textAlign="center">Logout</Typography>
-                            </MenuItem>
-                        </Menu>
-                    </Box>
-                    :
-                    
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Button onClick={SignIn} className={isSticky? headerStyles.navBtns : headerStyles.navBtns2} sx={{ p: 0, color: "inherit", fontWeight:'inherit' }}>
-                            <FaSignInAlt />&nbsp; Sign In
-                        </Button>
-                    </Box>}
-                </Toolbar>
-            </Container>
-        </AppBar>
-    );
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={() => setShowDrawer(true)}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Offcanvas
+              show={showDrawer}
+              onHide={() => setShowDrawer(false)}
+              style={{ width: "200px" }}
+            >
+              <Offcanvas.Body>
+                <Button
+                  onClick={() => {
+                    navigate("/");
+                    scrollToElement("top");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  Home
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/epic");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  EPIC
+                </Button>
+                {/* <Button
+                  onClick={() => {
+                    navigate("/apod");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  APOD
+                </Button> */}
+                <Button
+                  onClick={() => {
+                    navigate("/my-courses");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  My Courses
+                </Button>
+                {/* <Button
+                  onClick={() => {
+                    navigate("/favourites");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  Favourites
+                </Button> */}
+              </Offcanvas.Body>
+            </Offcanvas>
+          </Box>
+          <Box
+            sx={{ display: { xs: "flex", md: "none", cursor: "pointer" } }}
+            style={{ width: "100%", justifyContent: "center" }}
+          >
+            {isSticky ? (
+              <img
+                src="/LogoBig2.png"
+                width="150px"
+                onClick={() => navigate("/")}
+              />
+            ) : (
+              <img
+                src="/LogoBig1.png"
+                width="150px"
+                onClick={() => navigate("/")}
+              />
+            )}
+          </Box>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              onClick={() => {
+                navigate("/");
+                scrollToElement("top");
+              }}
+              sx={{
+                my: 2,
+                px: 3,
+                mx: 2,
+                color: "inherit",
+                fontWeight: "inherit",
+                display: "block",
+              }}
+              className={
+                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+              }
+            >
+              Home
+            </Button>
+            {/* <Button
+              onClick={() => {
+                navigate("/epic");
+              }}
+              sx={{
+                my: 2,
+                px: 3,
+                mx: 2,
+                color: "inherit",
+                fontWeight: "inherit",
+                display: "block",
+              }}
+              className={
+                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+              }
+            >
+              EPIC
+            </Button> */}
+            {/* <Button
+              onClick={() => {
+                navigate("/apod");
+              }}
+              sx={{
+                my: 2,
+                px: 3,
+                mx: 2,
+                color: "inherit",
+                fontWeight: "inherit",
+                display: "block",
+              }}
+              className={
+                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+              }
+            >
+              APOD
+            </Button> */}
+            {userInfo && (
+              <Button
+                onClick={() => {
+                  navigate("/my-courses");
+                }}
+                sx={{
+                  my: 2,
+                  px: 3,
+                  mx: 2,
+                  color: "inherit",
+                  fontWeight: "inherit",
+                  display: "block",
+                }}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+              >
+                My Courses
+              </Button>
+            )}
+
+            {/* <Button
+              onClick={() => {
+                navigate("/favourites");
+              }}
+              sx={{
+                my: 2,
+                px: 3,
+                mx: 2,
+                color: "inherit",
+                fontWeight: "inherit",
+                display: "block",
+              }}
+              className={
+                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+              }
+            >
+              Favourites
+            </Button> */}
+          </Box>
+          {userInfo ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                {userInfo.photoURL ? (
+                  <Avatar
+                    alt={userInfo.displayName}
+                    src={userInfo.photoURL}
+                    sx={!open ? { width: 24, height: 24 } : {}}
+                    style={{ transition: "all .2s ease-in-out" }}
+                  />
+                ) : (
+                  <AccountCircle />
+                )}
+              </IconButton>
+              <Menu
+                sx={{ mt: "45px", textAlign: "center" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem
+                  onClick={logoutHandler}
+                  style={{ justifyContent: "center" }}
+                >
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={profileHandle}
+                  style={{ justifyContent: "center" }}
+                >
+                  <Typography textAlign="center">Profile</Typography>
+                </MenuItem>
+              </Menu>
+              {userInfo && (
+                <IconButton
+                  onClick={() => setOpenNotifications(true)} // Open notifications dialog
+                  sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
+                >
+                  <NotificationsIcon />
+                </IconButton>
+              )}
+            </Box>
+          ) : (
+            <Box sx={{ flexGrow: 0 }}>
+              <Button
+                onClick={SignIn}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+                sx={{ p: 0, color: "inherit", fontWeight: "inherit" }}
+              >
+                <FaSignInAlt />
+                &nbsp; Sign In
+              </Button>
+              <Button
+                onClick={SignUp}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+                sx={{
+                  p: 1,
+                  fontWeight: "inherit",
+                  marginLeft: 2,
+                  backgroundColor: "white",
+                  color: "#000000",
+                }}
+              >
+                Join Now
+              </Button>
+            </Box>
+          )}
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
 };
 
 export default Header;
