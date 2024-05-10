@@ -44,6 +44,17 @@ const CourseDetailsPage = () => {
     }
   }, [id]);
 
+  const handleGetStarted = () => {
+    const userEmail = localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")).email : null;
+    if (userEmail) {
+      const nextPageUrl = `/nextPage?email=${encodeURIComponent(userEmail)}&courseId=${id}`;
+      window.location.href = nextPageUrl;
+    } else {
+      // Handle case when user email is not found in local storage
+      // You can redirect to login or display a message
+    }
+  };
+
   return (
     <Container sx={{ mt: 5 }}>
       {isLoading ? (
@@ -91,7 +102,7 @@ const CourseDetailsPage = () => {
                   </CardContent>
                   <Grid container justifyContent="center" mt={2}>
                     <Grid item xs={6}>
-                      <Button fullWidth variant="contained" color="primary">
+                      <Button fullWidth variant="contained" color="primary" onClick={handleGetStarted}>
                         Get started
                       </Button>
                     </Grid>
