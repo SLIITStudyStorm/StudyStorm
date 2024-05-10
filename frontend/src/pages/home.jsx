@@ -47,7 +47,7 @@ const HomePage = () => {
   };
 
   return (
-    <Container sx={{ mt: 5 }}>
+    <Container sx={{ mt: 8 }}>
       <Hero />
       <Typography variant="h4" sx={{ mb: 2 }}>
         Popular Courses

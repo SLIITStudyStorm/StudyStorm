@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Alert, AlertTitle} from '@mui/material';
 import { authApi } from '../../utils/api';
+import { toast } from "react-toastify";
+
 
 const theme = createTheme({
   palette: {
@@ -39,9 +41,11 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
       const response = await authApi.post(`/forgotPassword/verifyOtp/${otpValue}/${email}`);
 
       console.log('OTP verification successful!', response.data);
+      toast.success('OTP verification successful!');
 
       // Dispatch setUserInfo action if needed
       // Redirect user to desired page after successful verification
+
 
       // Reset state
       setError(false);
@@ -50,6 +54,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
         setChangePasswordState(true);
     } catch (error) {
       console.error('OTP verification failed!', error);
+      toast.error(error.response?.data?.message || error.message);
       setError(true);
       setSuccess(false);
     }
@@ -79,7 +84,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
         }}
       >
         <CssBaseline />
-        {error && (
+        {/* {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             <AlertTitle>Error</AlertTitle>
             Incorrect OTP. Please try again.
@@ -90,7 +95,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
             <AlertTitle>Success</AlertTitle>
             OTP verification successful!
           </Alert>
-        )}
+        )} */}
         <Box
           sx={{
             display: 'flex',

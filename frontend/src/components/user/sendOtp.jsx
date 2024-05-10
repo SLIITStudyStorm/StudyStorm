@@ -13,6 +13,8 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert, AlertTitle } from "@mui/material";
 import { authApi } from "../../utils/api";
+import { toast } from "react-toastify";
+
 
 const theme = createTheme({
   palette: {
@@ -32,6 +34,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
       // Send a request to your backend API to handle forgot password
       const response = await authApi.post(`/forgotPassword/verifyMail/${email}`);
       console.log("Password reset email sent!", response.data);
+      toast.success("Password reset email sent! Check your inbox.");
       setSuccess(true);
       setError(false);
       setSendOtpState(false);
@@ -39,6 +42,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
 
     } catch (error) {
       console.error("Forgot password request failed!", error);
+      toast.error(error.response?.data?.message || error.message);
       setSuccess(false);
       setError(true);
     }
@@ -57,7 +61,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
         }}
       >
         <CssBaseline />
-        {error && (
+        {/* {error && (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
            Something went wrong! Please try again.
@@ -68,7 +72,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
             <AlertTitle>Success</AlertTitle>
             Password reset email sent! Check your inbox.
           </Alert>
-        )}
+        )} */}
         <Box
           sx={{
             marginTop: 4,
