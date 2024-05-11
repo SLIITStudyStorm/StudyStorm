@@ -23,6 +23,18 @@ const CourseDetailsPage = () => {
   const [selectedStarFilters, setSelectedStarFilters] = useState([]); // State to hold selected star rating filters
   const [starFilter, setStarFilter] = useState(0); // State to track selected star rating filter
 
+  const fetchFeedbacks = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await feedbackApi.get(`/feedback/course/${id}`);
+      setFeedbacks(data);
+      calculateAverageRating(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     setCurrentUserEmail(localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")).email : null);
@@ -35,19 +47,6 @@ const CourseDetailsPage = () => {
         const { data } = await courseApi.get(`/course/one/${id}`);
         setCourseDetails(data.payload);
         toast.success(data.message);
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const fetchFeedbacks = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await feedbackApi.get(`/feedback/course/${id}`);
-        setFeedbacks(data);
-        calculateAverageRating(data);
       } catch (error) {
         toast.error(error.response?.data?.message || error.message);
       } finally {
@@ -183,53 +182,15 @@ const CourseDetailsPage = () => {
   const handleCloseAddFeedbackModal = () => {
     setOpenAddFeedbackModal(false);
   };
-// Filter feedbacks based on selected star rating filter
-const filteredFeedbacks = feedbacks.filter((feedbackItem) => {
-  if (selectedStarFilters.length === 0) {
-    return true; // Show all feedbacks if no star filter is selected
-  } else {
-    return selectedStarFilters.includes(feedbackItem.rating);
-  }
-});
 
-
-
-const renderStarRatingFilter = () => {
-  const ratings = [1, 2, 3, 4, 5];
-  return (
-    <Grid container spacing={1} justifyContent="center" alignItems="center">
-      {ratings.map((rating) => (
-        <Grid item key={rating}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={selectedStarFilters.includes(rating)}
-                onChange={(e) => handleStarFilterChange(rating, e.target.checked)}
-              />
-            }
-            label={
-              <>
-                <Rating value={rating} readOnly />
-                <span style={{ marginLeft: 4 }}></span>
-              </>
-            }
-          />
-        </Grid>
-      ))}
-      <Grid item>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectedStarFilters.length === ratings.length}
-              onChange={(e) => handleAllStarFilterChange(e.target.checked)}
-            />
-          }
-          label="Display All"
-        />
-      </Grid>
-    </Grid>
-  );
-};
+  // Filter feedbacks based on selected star rating filter
+  const filteredFeedbacks = feedbacks.filter((feedbackItem) => {
+    if (selectedStarFilters.length === 0) {
+      return true; // Show all feedbacks if no star filter is selected
+    } else {
+      return selectedStarFilters.includes(feedbackItem.rating);
+    }
+  });
 
   const handleStarFilterChange = (rating, checked) => {
     if (checked) {
@@ -239,8 +200,7 @@ const renderStarRatingFilter = () => {
     }
     setStarFilter(rating); // Update the starFilter state
   };
-  
-  
+
   const handleAllStarFilterChange = (checked) => {
     if (checked) {
       setSelectedStarFilters([1, 2, 3, 4, 5]);
@@ -250,7 +210,43 @@ const renderStarRatingFilter = () => {
       setStarFilter(0); // Update the starFilter state to 0
     }
   };
-  
+
+  const renderStarRatingFilter = () => {
+    const ratings = [1, 2, 3, 4, 5];
+    return (
+      <Grid container spacing={1} justifyContent="center" alignItems="center">
+        {ratings.map((rating) => (
+          <Grid item key={rating}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedStarFilters.includes(rating)}
+                  onChange={(e) => handleStarFilterChange(rating, e.target.checked)}
+                />
+              }
+              label={
+                <>
+                  <Rating value={rating} readOnly />
+                  <span style={{ marginLeft: 4 }}></span>
+                </>
+              }
+            />
+          </Grid>
+        ))}
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={selectedStarFilters.length === ratings.length}
+                onChange={(e) => handleAllStarFilterChange(e.target.checked)}
+              />
+            }
+            label="Display All"
+          />
+        </Grid>
+      </Grid>
+    );
+  };
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -298,8 +294,8 @@ const renderStarRatingFilter = () => {
                       Average Rating: {averageRating.toFixed(1)}
                     </Typography>
                     <Typography variant="body2" gutterBottom>
-          <Rating value={averageRating} readOnly style={{ marginLeft: 4 }} />
-        </Typography>
+                      <Rating value={averageRating} readOnly style={{ marginLeft: 4 }} />
+                    </Typography>
                   </CardContent>
                   <Grid container justifyContent="center" mt={2}>
                     <Grid item xs={6}>
