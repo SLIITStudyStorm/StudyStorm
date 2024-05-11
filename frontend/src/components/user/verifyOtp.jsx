@@ -80,7 +80,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          marginTop: '50px',
+          marginTop: '100px',
         }}
       >
         <CssBaseline />
@@ -144,6 +144,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
                        authApi.post(`/forgotPassword/verifyMail/${email}`)
                        .then((response) => {
                          console.log('OTP sent successfully!', response.data);
+                          toast.success('OTP sent successfully!');
                        })
                        ;
                 }}>Resend OTP</Button>

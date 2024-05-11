@@ -28,6 +28,18 @@ const App = () => {
         case `/admin/courses/update/${id}`:
           document.title = `StudyStorm | Update Course`;
           break;
+      case '/login':
+        document.title = `StudyStorm | Login`;
+        break;
+      case '/register':
+        document.title = `StudyStorm | Register`;
+        break;
+      case '/user/profile':
+        document.title = `StudyStorm | Profile`;
+        break;
+      case '/forgotpassword':
+        document.title = `StudyStorm | Forgot Password`;
+        break;
       default:
         document.title = `StudyStorm | 404 Not Found`;
         break;
