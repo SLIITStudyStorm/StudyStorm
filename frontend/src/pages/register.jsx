@@ -49,7 +49,7 @@ export default function RegisterPage() {
       phoneNumber: data.get("phone"),
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
-      roles: "ROLE_USER",
+      roles: "ROLE_LEARNER",
     };
 
     console.log(requestData);

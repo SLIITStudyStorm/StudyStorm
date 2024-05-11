@@ -53,14 +53,15 @@ const Header = () => {
       }
     };
 
-        setNotifications([
-          { text: "New course added: Introduction to React" },
-          { text: "New course added: Introduction to Node.js" },
-          { text: "New course added: Introduction to Express.js" },
-        ]);
-
+    setNotifications([
+      { text: "New course added: Introduction to React" },
+      { text: "New course added: Introduction to Node.js" },
+      { text: "New course added: Introduction to Express.js" },
+    ]);
 
     document.body.addEventListener("click", handleClickOutside);
+
+    console.log(userInfo);
 
     return () => {
       document.body.removeEventListener("click", handleClickOutside);
@@ -159,12 +160,12 @@ const Header = () => {
   };
 
   const handleCardClick = (event) => {
-    event.stopPropagation(); 
+    event.stopPropagation();
   };
 
   const handleNotificationClick = (event) => {
     event.stopPropagation();
-    setOpenNotifications(!openNotifications); 
+    setOpenNotifications(!openNotifications);
   };
 
   const scrollToElement = (id) => {
@@ -354,24 +355,7 @@ const Header = () => {
             >
               Home
             </Button>
-            {/* <Button
-              onClick={() => {
-                navigate("/epic");
-              }}
-              sx={{
-                my: 2,
-                px: 3,
-                mx: 2,
-                color: "inherit",
-                fontWeight: "inherit",
-                display: "block",
-              }}
-              className={
-                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
-              }
-            >
-              EPIC
-            </Button> */}
+
             <Button
               onClick={() => {
                 navigate(`${userType}/courses`);
@@ -390,42 +374,48 @@ const Header = () => {
             >
               COURSES
             </Button>
-            {/* <Button
-              onClick={() => {
-                navigate("/mars");
-              }}
-              sx={{
-                my: 2,
-                px: 3,
-                mx: 2,
-                color: "inherit",
-                fontWeight: "inherit",
-                display: "block",
-              }}
-              className={
-                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
-              }
-            >
-              Mars
-            </Button> */}
-            <Button
-              onClick={() => {
-                navigate("/my-courses");
-              }}
-              sx={{
-                my: 2,
-                px: 3,
-                mx: 2,
-                color: "inherit",
-                fontWeight: "inherit",
-                display: "block",
-              }}
-              className={
-                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
-              }
-            >
-              My Courses
-            </Button> 
+
+            {userInfo && userInfo.userType === "ROLE_LEARNER" && (
+              <Button
+                onClick={() => {
+                  navigate("/my-courses");
+                }}
+                sx={{
+                  my: 2,
+                  px: 3,
+                  mx: 2,
+                  color: "inherit",
+                  fontWeight: "inherit",
+                  display: "block",
+                }}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+              >
+                My Courses
+              </Button>
+            )}
+
+            {userInfo && userInfo.userType === "ROLE_ADMIN" && (
+              <Button
+                onClick={() => {
+                  navigate("/admin/users/all");
+                }}
+                sx={{
+                  my: 2,
+                  px: 3,
+                  mx: 2,
+                  color: "inherit",
+                  fontWeight: "inherit",
+                  display: "block",
+                }}
+                className={
+                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                }
+              >
+                Users
+              </Button>
+            )}
           </Box>
           {userInfo ? (
             <Box sx={{ flexGrow: 0 }}>
@@ -472,7 +462,7 @@ const Header = () => {
               </Menu>
               {userInfo && (
                 <IconButton
-                onClick={handleNotificationClick}
+                  onClick={handleNotificationClick}
                   sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
                 >
                   <NotificationsIcon />
@@ -528,20 +518,19 @@ const Header = () => {
             }}
             onClick={handleCardClick}
           >
-         {notifications.map((notification, index) => (
-          <Card key={index} sx={{ padding: "10px", marginBottom: "10px" }}>
-            <Typography key={index} variant="body2" color="textSecondary">
-              {notification.text}
-            </Typography>
-          </Card>
-            
-          ))}
-          {/* Display message if there are no notifications */}
-          {notifications.length === 0 && (
-            <Typography variant="body2" color="textSecondary">
-              No new notifications.
-            </Typography>
-          )}
+            {notifications.map((notification, index) => (
+              <Card key={index} sx={{ padding: "10px", marginBottom: "10px" }}>
+                <Typography key={index} variant="body2" color="textSecondary">
+                  {notification.text}
+                </Typography>
+              </Card>
+            ))}
+            {/* Display message if there are no notifications */}
+            {notifications.length === 0 && (
+              <Typography variant="body2" color="textSecondary">
+                No new notifications.
+              </Typography>
+            )}
           </Card>
         )}
       </Container>
