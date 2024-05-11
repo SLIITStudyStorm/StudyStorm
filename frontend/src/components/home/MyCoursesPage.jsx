@@ -3,7 +3,6 @@ import { Container, Typography, Grid } from '@mui/material';
 import { learnerApi, courseApi } from "../../utils/api";
 import { toast } from "react-toastify";
 import MyCourseCard from './MyCourseCard'; // Importing the MyCourseCard component
-import { confirmAlert } from 'react-confirm-alert'; // Import the confirmation dialog library
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import confirmation dialog styles
 
 const MyCoursesPage = () => {
