@@ -1,8 +1,9 @@
 import React from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
-import { confirmAlert } from 'react-confirm-alert'; // Import the confirmation dialog library
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import confirmation dialog styles
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const MyCourseCard = ({ course, onDelete }) => {
 
@@ -14,7 +15,7 @@ const MyCourseCard = ({ course, onDelete }) => {
       buttons: [
         {
           label: 'Yes',
-          onClick: () => onDelete(course.course_id) // Pass courseId to onDelete function
+          onClick: () => onDelete(course.course_id)
         },
         {
           label: 'No',
@@ -44,9 +45,12 @@ const MyCourseCard = ({ course, onDelete }) => {
                   <IconButton onClick={handleDeleteClick}>
                     <Delete />
                   </IconButton>
-                  <IconButton onClick={() => onViewDetails(course.course_id)}>
-                    <Visibility />
-                  </IconButton>
+                  {/* Use Link to navigate to the course */}
+                  <Link to={`/my-courses/course/${course.course_id}`}>
+                    <IconButton>
+                      <Visibility />
+                    </IconButton>
+                  </Link>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                   <Typography fontSize={25}>{course.name}</Typography>
