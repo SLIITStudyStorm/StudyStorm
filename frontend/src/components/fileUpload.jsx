@@ -11,45 +11,12 @@ import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
 import customStyles from '../styles/fileUploadStyles.module.css';
+import { FileIconList } from '../data';
 
 export default function FormUploadArea({multiple = false, accept = "image/*", maxFileSize = 1000000, label, selectfunc = () => {}}) {
 
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
-    const [otherFileTypeSrc, setOtherFileTypeSrc] = useState([
-        {
-            name: 'pdf',
-            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_pdf_filetype_icon_176234.png'
-        },
-        {
-            name: 'csv',
-            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png'
-        },
-        {
-            name: 'doc',
-            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_doc_filetype_icon_176249.png'
-        },
-        {
-            name: 'xlsx',
-            src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_xls_filetype_icon_176238.png'
-        },
-        {
-            name: 'mp4',
-            src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
-        },
-        {
-            name: 'mkv',
-            src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
-        },
-        {
-            name: 'zip',
-            src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
-        },
-        {
-            name: 'rar',
-            src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
-        },
-    ]);
     
     
     const onSelect = (e) => {
@@ -65,7 +32,7 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
     };
 
     const getFileType = (type) => {
-        return otherFileTypeSrc.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
+        return FileIconList.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
     }
 
     const onTemplateRemove = (file, callback) => {
@@ -80,7 +47,6 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
     const itemTemplate = (file, props) => {
         return (
             <>
-            {multiple ? 
                 <div className={`flex align-items-center flex-wrap`}>
                     <div className="flex align-items-center" style={{ width: '55%' }}>
                         <img alt={file.name} role="presentation" src={accept == "image/*" ? file.objectURL : getFileType(file.name.split('.')[1])} width={100} />
@@ -92,21 +58,6 @@ export default function FormUploadArea({multiple = false, accept = "image/*", ma
                     <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
                     <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
                 </div>
-            :
-                <div className={`flex align-items-center flex-wrap flex-column p-0 ${customStyles.imgDiv}`}>
-                    <div className="flex align-items-left flex-column" style={{ width: '265px' }}>
-                        <img alt={file.name} role="presentation" className={customStyles.img} src={file.objectURL} height={'100%'} width={'100%'} />
-                        <div className={customStyles.imgDetailDiv}>
-                            <span className="flex flex-column text-center">
-                                {file.name}
-                                <small>{new Date().toLocaleDateString()}</small>
-                            </span>
-                            <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                        </div>
-                        <div className={customStyles.imgCloseDiv}><Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger" onClick={() => onTemplateRemove(file, props.onRemove)} /></div>
-                    </div>
-                </div>
-            }
             </>
         );
     };

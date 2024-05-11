@@ -16,3 +16,6 @@
 [submodule "backend/PaymentService"]
 	path = backend/PaymentService
 	url = https://github.com/SLIITStudyStorm/PaymentService.git
+[submodule "feedbackManagmentService"]
+	path = feedbackManagmentService
+	url = https://github.com/SLIITStudyStorm/feedbackManagmentService.git

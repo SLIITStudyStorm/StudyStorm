@@ -149,8 +149,47 @@ const LevelList = ["Beginner","Intermediate","Advanced"];
 const DurationList = ["Less Than 2 Hours", "1-4 Weeks", "1-3 Months", "3-6 Months", "6-9 Months", "9-12 Months", "More Than 1 Year"];
 const SkillsList = ["Leadership and Management", "Communication", "Strategy", "Data Analysis"];
 
+// File Types
+const FileIconList = [
+    {
+        name: 'pdf',
+        src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_pdf_filetype_icon_176234.png'
+    },
+    {
+        name: 'csv',
+        src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png'
+    },
+    {
+        name: 'doc',
+        src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_doc_filetype_icon_176249.png'
+    },
+    {
+        name: 'xlsx',
+        src: 'https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_xls_filetype_icon_176238.png'
+    },
+    {
+        name: 'mp4',
+        src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
+    },
+    {
+        name: 'mkv',
+        src: 'https://cdn.icon-icons.com/icons2/2101/PNG/512/social_media_youtube_video_play_icon_128997.png'
+    },
+    {
+        name: 'zip',
+        src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
+    },
+    {
+        name: 'rar',
+        src: 'https://cdn.icon-icons.com/icons2/886/PNG/512/file-expand_Zip_icon-icons.com_68944.png'
+    },
+    {
+        name: 'link',
+        src: 'https://cdn.icon-icons.com/icons2/906/PNG/512/link_icon-icons.com_70055.png'
+    },
+]
 
 //
 
 
-export { SubjectList, LanguageList, TypeList, LevelList, DurationList, SkillsList }
+export { SubjectList, LanguageList, TypeList, LevelList, DurationList, SkillsList, FileIconList }
