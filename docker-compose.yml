@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  course-db:
+    image: mysql:latest
+    restart: always
+    container_name: course-db
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./backend/CourseManagementService/.env
+
+  course-service:
+    build:
+      context: .
+      dockerfile: ./backend/CourseManagementService/Dockerfile
+    container_name: course-service
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/CourseManagementService/.env
+    depends_on:
+      - course-db
