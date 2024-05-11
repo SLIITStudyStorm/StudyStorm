@@ -23,6 +23,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../utils/api";
+import { toast } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -59,12 +60,18 @@ export default function AdminRegisterPage() {
       console.log(response);
       setResponseData(response.data);
 
-      // go to login page
       if (response.data === "User added successfully") {
-        navigate("/login");
+        toast.success("User added successfully");
+        navigate("/admin/users/all");
+        return;
       }
+
+      toast.error(response.data);
+
     } catch (error) {
       console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+
       // handle error here
     }
   };
@@ -84,7 +91,7 @@ export default function AdminRegisterPage() {
         }}
       >
         <CssBaseline />
-        {responseData && (
+        {/* {responseData && (
           <Alert
             severity={
               responseData === "User added successfully" ? "success" : "error"
@@ -93,7 +100,7 @@ export default function AdminRegisterPage() {
           >
             {responseData}
           </Alert>
-        )}
+        )} */}
         <Card sx={{}}>
           <Box
             sx={{

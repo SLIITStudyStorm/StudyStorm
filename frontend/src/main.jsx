@@ -32,6 +32,7 @@ import CardPage from "./components/home/card.jsx";
 import MyCoursesPage from "./components/home/MyCoursesPage.jsx";
 import InstructorRoute from "./components/instructorRoute.jsx";
 import AdminCourseHomePage from "./pages/coursemanagement/pendingCourses.jsx";
+import AllUsersPage from "./pages/admin/users.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +56,7 @@ const router = createBrowserRouter(
           <Route path="/admin/courses/:id" element={<CourseContentPage />} />
 
           <Route path="/admin/users/create" element={<AdminRegisterPage />} />
+          <Route path="/admin/users/all" element={<AllUsersPage />} />
         </Route>
 
         {/* Instructor Routes */}
