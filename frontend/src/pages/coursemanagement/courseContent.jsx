@@ -3,13 +3,13 @@ import BreadCrumbs from "../../components/breadcrubs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { courseApi } from "../../utils/api";
-import createFileObjectFromPath from "../../utils/createFileObjectFromPath";
 import dayjs from "dayjs";
 import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
-import { Add, AddCircle, AddCircleOutline, Close, Delete, Edit, ExpandMore, RemoveRedEye } from "@mui/icons-material";
+import { Add, AddCircleOutline, Close, Delete, Edit, ExpandMore } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import FormUploadArea from "../../components/fileUpload";
 import { FileIconList } from "../../data";
+import CourseContentStyles from '../../styles/courseContent.module.css'
 
 const CourseContentPage = () => {
     
@@ -34,11 +34,13 @@ const CourseContentPage = () => {
     const [approveAction, setApproveAction] = useState(false);
     
     const [contentId, setContentId] = useState('');
+    const [detailId, setDetailId] = useState('');
     const [showDialog, setShowDialog] = useState(false);
     const [showDialog2, setShowDialog2] = useState(false);
     const [showDialog3, setShowDialog3] = useState(false);
     const [showDialog4, setShowDialog4] = useState(false);
     const [showDialog5, setShowDialog5] = useState(false);
+    const [showDialog6, setShowDialog6] = useState(false);
 
     const [courseContents, setCourseContents] = useState([]);
     const [contentTitle, setContentTitle] = useState('');
@@ -81,7 +83,7 @@ const CourseContentPage = () => {
             setThumbnail(data.payload.thumbnail);
 
             await fetchCourseContents()
-            toast.success(data.message);
+            // toast.success(data.message);
 
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
@@ -277,6 +279,26 @@ const CourseContentPage = () => {
         }
     }
 
+    const promptDeleteFile = (detail_id) => {
+        setDetailId(detail_id)
+        setShowDialog6(true);
+    }
+
+    const deleteCourseContentFile = async() => {
+        try {
+            setIsLoading(true);
+            let {data} = await courseApi.delete(`/course/content/detail/delete/${detailId}`);
+            await fetchCourseContents();
+            toast.success(data.message);
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setIsLoading(false);
+            setShowDialog6(false);
+            setDetailId('');
+        }
+    }
+
     const getFileType = (type) => {
         return FileIconList.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
     }
@@ -390,16 +412,20 @@ const CourseContentPage = () => {
                                     }
                                     <br />
                                     {courseContentDetails[content.content_id]?.map((detail, index) => (
-                                        <>
-                                            <Grid container key={index} spacing={2}>
-                                                <Grid item md={.3}>
-                                                    <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
-                                                </Grid>
-                                                <Grid item md={11}>
-                                                    <Typography style={{cursor:'pointer'}} onClick={() => handleCourseContentDetailClick(detail)}>{detail.title}</Typography>
-                                                </Grid>
+                                        <Grid container key={index} spacing={0} alignItems={'center'} className={CourseContentStyles.fileRow}>
+                                            <Grid item md={.4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                                <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
                                             </Grid>
-                                        </>
+                                            <Grid item md={11} style={{cursor:'pointer'}} onClick={() => handleCourseContentDetailClick(detail)}>
+                                                <Typography>{detail.title}</Typography>
+                                            </Grid>
+                                        {
+                                            editable &&
+                                            <Grid item md={.6}>
+                                                <IconButton onClick={() => promptDeleteFile(detail.detail_id)}><Delete /> </IconButton>
+                                            </Grid>
+                                        }
+                                        </Grid>
                                     ))}
                                     {
                                         editable &&
@@ -611,12 +637,29 @@ const CourseContentPage = () => {
                 fullScreen
             >
                 <DialogTitle textAlign={'right'}>
-                    <IconButton><Close onClick={() => setShowDialog5(false)} /></IconButton>
+                    <IconButton onClick={() => setShowDialog5(false)}><Close /></IconButton>
                 </DialogTitle>
                 <DialogContent>
                     <iframe src={detailSrc} onError={() => setShowDialog5(false)} width={'100%'} height={'100%'}/>
                 </DialogContent>
                 
+            </Dialog>
+            
+            <Dialog
+                open={showDialog6}
+                onClose={() => setShowDialog6(false)}
+            >
+                <DialogTitle>
+                    Are you sure you want to delete this file?
+                </DialogTitle>
+                <DialogActions>
+                <Button autoFocus onClick={() => setShowDialog6(false)}>
+                    Cancel
+                </Button>
+                <Button onClick={deleteCourseContentFile} autoFocus color="error">
+                    Confirm
+                </Button>
+                </DialogActions>
             </Dialog>
         </>
     );

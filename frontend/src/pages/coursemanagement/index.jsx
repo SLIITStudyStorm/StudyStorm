@@ -171,7 +171,7 @@ const CourseHomePage = () => {
                         {tab == "rejected" && 
                         <TabPanel value="rejected">
                             <Grid container spacing={2}>
-                                <Grid item xs={6}>
+                                <Grid item xs={12}>
                                     <Typography fontSize={30}>Rejected Courses</Typography>
                                 </Grid>
                                 {courses.map((course, index) => (
