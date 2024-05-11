@@ -18,38 +18,39 @@ services:
     restart: always
     container_name: course-db
     ports:
-      - "3306:3306"
+      - "3308:3306"
     env_file:
       - ./backend/CourseManagementService/.env
 
   notification-db:
     image: mongo:latest
     restart: always
+    container_name: notification-db
     ports:
       - "27017"
     env_file:
       - ./backend/NotificationService/.env
 
-  auth-service:
-    build:
-      context: ./backend/AuthenticationService
-      dockerfile: Dockerfile
-    container_name: auth-service
-    restart: always
-    depends_on:
-      - auth-db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
-      MAIL_HOST: smtp.gmail.com
-      MAIL_PORT: 587
-      MAIL_USERNAME: avishkatest123@gmail.com
-      MAIL_PASSWORD: rvhe fqfh npka kfan
-      MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'true'
-      MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'true'
-    ports:
-      - "8080:8080"
+  # auth-service:
+  #   build:
+  #     context: ./backend/AuthenticationService
+  #     dockerfile: Dockerfile
+  #   container_name: auth-service
+  #   restart: always
+  #   depends_on:
+  #     - auth-db
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth
+  #     SPRING_DATASOURCE_USERNAME: root
+  #     SPRING_DATASOURCE_PASSWORD: password
+  #     MAIL_HOST: smtp.gmail.com
+  #     MAIL_PORT: 587
+  #     MAIL_USERNAME: avishkatest123@gmail.com
+  #     MAIL_PASSWORD: rvhe fqfh npka kfan
+  #     MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'true'
+  #     MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'true'
+  #   ports:
+  #     - "8080:8080"
 
   course-service:
     build:
@@ -74,6 +75,16 @@ services:
       - ./backend/NotificationService/.env
     depends_on:
       - notification-db
+      
+  studystorm-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: studystorm-app
+    ports:
+      - "80:80"
+    env_file:
+      - ./frontend/.env
 
 volumes:
   mysql_data:
