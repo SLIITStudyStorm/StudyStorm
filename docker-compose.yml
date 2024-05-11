@@ -1,6 +1,18 @@
-version: '3'
+version: '3.1'
 
 services:
+  auth-db:
+    image: mysql:latest
+    restart: always
+    container_name: auth-db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: auth
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   course-db:
     image: mysql:latest
     restart: always
@@ -10,10 +22,39 @@ services:
     env_file:
       - ./backend/CourseManagementService/.env
 
+  notification-db:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017"
+    env_file:
+      - ./backend/NotificationService/.env
+
+  auth-service:
+    build:
+      context: ./backend/AuthenticationService
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    depends_on:
+      - auth-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: avishkatest123@gmail.com
+      MAIL_PASSWORD: rvhe fqfh npka kfan
+      MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'true'
+      MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'true'
+    ports:
+      - "8080:8080"
+
   course-service:
     build:
-      context: .
-      dockerfile: ./backend/CourseManagementService/Dockerfile
+      context: ./backend/CourseManagementService
+      dockerfile: Dockerfile
     container_name: course-service
     ports:
       - "5000:5000"
@@ -21,3 +62,18 @@ services:
       - ./backend/CourseManagementService/.env
     depends_on:
       - course-db
+
+  notification-service:
+    build:
+      context: ./backend/NotificationService
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./backend/NotificationService/.env
+    depends_on:
+      - notification-db
+
+volumes:
+  mysql_data:
