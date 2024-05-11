@@ -19,10 +19,9 @@ const HomePage = () => {
         const page = 1; 
         const rows = 50; 
         const { data } = await courseApi.get("/course/all", { params: { page, rows } });
-        // Filter out the unpublished courses
-        const publishedCourses = data.payload.rows.filter((course) => course.published);
-        setCourses(publishedCourses);
-        setFilteredCourses(publishedCourses);
+        // Remove filtering of unpublished courses
+        setCourses(data.payload.rows);
+        setFilteredCourses(data.payload.rows);
       } catch (error) {
         toast.error(error.response?.data?.message || error.message);
       } finally {

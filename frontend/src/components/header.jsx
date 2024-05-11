@@ -408,9 +408,9 @@ const Header = () => {
             >
               Mars
             </Button> */}
-            {/* <Button
+            <Button
               onClick={() => {
-                navigate("/favourites");
+                navigate("/my-courses");
               }}
               sx={{
                 my: 2,
@@ -424,8 +424,8 @@ const Header = () => {
                 isSticky ? headerStyles.navBtns : headerStyles.navBtns2
               }
             >
-              Favourites
-            </Button> */}
+              My Courses
+            </Button> 
           </Box>
           {userInfo ? (
             <Box sx={{ flexGrow: 0 }}>
