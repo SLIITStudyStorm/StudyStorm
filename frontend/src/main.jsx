@@ -30,6 +30,8 @@ import UserProfilePage from "./pages/user/userProfile.jsx";
 import CourseDetailsPage from "./components/home/CourseDetailsPage.jsx";
 import CardPage from "./components/home/card.jsx";
 import MyCoursesPage from "./components/home/MyCoursesPage.jsx";
+import InstructorRoute from "./components/instructorRoute.jsx";
+import AdminCourseHomePage from "./pages/coursemanagement/pendingCourses.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -49,12 +51,18 @@ const router = createBrowserRouter(
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute />}>
-          <Route path="/admin/courses" element={<CourseHomePage />} />
-          <Route path="/admin/courses/create" element={<CoursePage />} />
-          <Route path="/admin/courses/update/:id" element={<CoursePage />} />
+          <Route path="/admin/courses" element={<AdminCourseHomePage />} />
           <Route path="/admin/courses/:id" element={<CourseContentPage />} />
 
           <Route path="/admin/users/create" element={<AdminRegisterPage />} />
+        </Route>
+
+        {/* Instructor Routes */}
+        <Route path="/instructor" element={<InstructorRoute />}>
+          <Route path="/instructor/courses" element={<CourseHomePage />} />
+          <Route path="/instructor/courses/create" element={<CoursePage />} />
+          <Route path="/instructor/courses/update/:id" element={<CoursePage />} />
+          <Route path="/instructor/courses/:id" element={<CourseContentPage />} />
         </Route>
       </Route>
 

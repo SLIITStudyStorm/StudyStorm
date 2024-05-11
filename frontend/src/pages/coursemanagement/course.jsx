@@ -31,7 +31,6 @@ const CoursePage = () => {
     const [duration, setDuration] = useState('Less Than 2 Hours');
     const [startDate, setStartDate] = useState(null);
     const [price, setPrice] = useState(0);
-    const [publish, setPublish] = useState(false);
 
     const [titleError, setTitleError] = useState(false);
     const [descError, setDescError] = useState(false);
@@ -82,7 +81,6 @@ const CoursePage = () => {
             formData.append('start_date', start);
             formData.append('price', price);
             formData.append('thumbnail', files[0]);
-            formData.append('published', publish);
 
             let res;
             if(id){
@@ -94,7 +92,7 @@ const CoursePage = () => {
 
             toast.success(res.data.message);
             setCustomCrumb(title)
-            navigate('/admin/courses')
+            navigate(`/instructor/courses/${res.data?.payload?.course_id || id}`)
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }
@@ -115,7 +113,6 @@ const CoursePage = () => {
             setSkills(data.payload.skills);
             setStartDate(dayjs(data.payload.start_date));
             setPrice(data.payload.price);
-            setPublish(data.payload.published);
 
             if(data.payload.thumbnail) {
                 let file = await createFileObjectFromPath(data.payload.thumbnail);
@@ -292,17 +289,6 @@ const CoursePage = () => {
                                             *{"Valid Price is required"}
                                         </Typography>
                                     </FormControl>
-                                </Grid>
-                                <Grid item xs={12} lg={6}>
-                                    <FormControlLabel 
-                                        control={
-                                            <Switch  
-                                                checked={publish}
-                                                onChange={(e) => setPublish(e.target.checked)}
-                                            />
-                                        } 
-                                        label="Publish" 
-                                    />
                                 </Grid>
                             </Grid>
                         </Grid>

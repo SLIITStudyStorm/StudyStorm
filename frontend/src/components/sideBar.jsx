@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation  } from 'react-router-dom';
+import { Link, useLocation, useNavigate  } from 'react-router-dom';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { styled, useTheme } from '@mui/material/styles';
@@ -17,9 +17,8 @@ import LogoBig from '/LogoBig1.png';
 import Logo from '/Logo1.png';
 
 import { setSideBarStatus } from '../slices/customizeSlice';
-import { clearUserInfo, setUserInfo } from '../slices/authSlice';
+import { clearUserInfo } from '../slices/authSlice';
 
-// import signInWithGoogle from '../firebase/googleAuth';
 import { FaSignInAlt } from 'react-icons/fa';
 
 const drawerWidth = 240;
@@ -80,12 +79,13 @@ export default function Sidebar() {
   
   const { sideBar } = useSelector((state) => state.customize);
   const { userInfo } = useSelector((state) => state.auth);
-
+  
   const [open, setOpen] = React.useState(sideBar ? sideBar.status : false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const activeRoute = location.pathname;
 
   const handleDrawerOpen = () => {
@@ -97,28 +97,6 @@ export default function Sidebar() {
     setOpen(false);
     dispatch(setSideBarStatus({status:false})); 
   };
-
-  const SignIn = async() => {
-    try {
-      let { user } = await signInWithGoogle();
-
-      dispatch(
-        setUserInfo({
-          firstName: user.displayName.split(' ')[0],
-          lastName: user.displayName.split(' ')[1],
-          displayName: user.displayName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          photoURL: user.photoURL
-        })
-      )
-
-      toast.success('Login Successful!')
-    } catch (error) {
-      toast.error('Login Failed!')
-      console.error(error)
-    }
-  }
 
   const logout = async() => {
     setAnchorEl(null)
@@ -134,6 +112,7 @@ export default function Sidebar() {
   React.useEffect(() => {
     setOpen(sideBar ? sideBar.status : false);
   },[isSmallScreen]);
+
   
   return (
     <Box sx={{ display: 'flex' }} id='sideBarBox'>
@@ -164,6 +143,19 @@ export default function Sidebar() {
                   <MenuBook />
                 </ListItemIcon>
                 <ListItemText primary={'Courses'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem></Link>
+          }
+
+          {userInfo && userInfo.userType === 'ROLE_INSTRUCTOR' &&
+          <Link to='/instructor/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'My Courses' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/instructor/course') ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                  <MenuBook />
+                </ListItemIcon>
+                <ListItemText primary={'My Courses'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </Tooltip>
           </ListItem></Link>
@@ -202,7 +194,7 @@ export default function Sidebar() {
           </>
         : 
           <>
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={SignIn}>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={() => navigate('/login')}>
               <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'initial', px: 2.5, }} className={`${sideBarStyles.itmBtn}`}>
                 <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
                   <FaSignInAlt />

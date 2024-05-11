@@ -25,15 +25,18 @@ const CourseContentPage = () => {
     const [duration, setDuration] = useState('Less Than 2 Hours');
     const [startDate, setStartDate] = useState(null);
     const [price, setPrice] = useState(0);
-    const [published, setPublished] = useState(false);
+    const [approved, setApproved] = useState(false);
     const [contType, setContType] = useState('file')
 
     const [editable, setEditable] = useState(false);
+    const [approvable, setApprovable] = useState(false);
+    const [approveAction, setApproveAction] = useState(false);
     
     const [contentId, setContentId] = useState('');
     const [showDialog, setShowDialog] = useState(false);
     const [showDialog2, setShowDialog2] = useState(false);
     const [showDialog3, setShowDialog3] = useState(false);
+    const [showDialog4, setShowDialog4] = useState(false);
 
     const [courseContents, setCourseContents] = useState([]);
     const [contentTitle, setContentTitle] = useState('');
@@ -69,7 +72,7 @@ const CourseContentPage = () => {
             setSkills(data.payload.skills);
             setStartDate(dayjs(data.payload.start_date));
             setPrice(data.payload.price);
-            setPublished(data.payload.published);
+            setApproved(data.payload.approved);
             setThumbnail(data.payload.thumbnail);
 
             await fetchCourseContents()
@@ -82,12 +85,19 @@ const CourseContentPage = () => {
         }
     }
 
-    const publish = async() => {
+
+    const promptApprove = (status) => {
+        setApproveAction(status);
+        setShowDialog4(true)
+    }
+
+    const approve = async() => {
         try {
             setIsLoading(true);
-            let {data} = await courseApi.patch(`/course/publish/${id}`);
-            await fetchCourse();
+            let {data} = await courseApi.patch(`/course/approve/${id}/${approveAction}`);
+            
             toast.success(data.message);
+            navigate('/admin/courses')
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         } finally {
@@ -195,8 +205,13 @@ const CourseContentPage = () => {
     useEffect(() => {
         fetchCourse()
 
-        if(userInfo.userType == "ROLE_ADMIN" || userInfo.userType == "ROLE_FACULTY"){
+        if(userInfo.userType == "ROLE_ADMIN"){
+            setEditable(false);
+            setApprovable(true);
+        }
+        else if(userInfo.userType == "ROLE_INSTRUCTOR"){
             setEditable(true);
+            setApprovable(false);
         }
     }, [])
 
@@ -214,16 +229,13 @@ const CourseContentPage = () => {
                                         <img src={import.meta.env.VITE_COURSE_SERVER_URL+thumbnail} onError={(event) => { event.target.src = "/default.png" }}  alt={title} style={{width:'100%', height:'auto', maxHeight:'350px', objectFit:'cover', borderRadius:'5px'}} />
                                     </Grid>
                                     <Grid item xs={12} sm={9} md={12} lg={9}>
-                                        <Grid container spacing={2}>
+                                        <Grid container spacing={2} height={'100%'}>
                                             {
                                                 editable &&
                                                 <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
                                                     <IconButton onClick={() => navigate(`../courses/update/${id}`)} >
                                                         <Edit />
                                                     </IconButton>
-                                                    <Tooltip title="Publish" placement="top" arrow>
-                                                        <Switch checked={published} onChange={publish} />
-                                                    </Tooltip>
                                                 </Grid>
                                             }
                                             <Grid item xs={12} sm={12} md={12} lg={12}>        
@@ -234,6 +246,16 @@ const CourseContentPage = () => {
                                                 <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
                                                 <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
                                             </Grid>
+                                            {
+                                                approvable && approved == null &&
+                                                <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'} display={'flex'} justifyContent={'flex-end'} alignItems={'flex-end'}>
+                                                    <Button variant="contained" color="success" onClick={() => promptApprove(true)}>Approve</Button>
+                                                    &nbsp;
+                                                    &nbsp;
+                                                    &nbsp;
+                                                    <Button variant="contained" color="error" onClick={() => promptApprove(false)}>Reject</Button>
+                                                </Grid>
+                                            }
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -441,6 +463,23 @@ const CourseContentPage = () => {
                     <Button onClick={handleContentDetailSubmit} autoFocus color="success">
                         Add
                     </Button>
+                </DialogActions>
+            </Dialog>
+            
+            <Dialog
+                open={showDialog4}
+                onClose={() => setShowDialog4(false)}
+            >
+                <DialogTitle>
+                    Are you sure you want to {approveAction ? 'approve' : 'reject'} this course?
+                </DialogTitle>
+                <DialogActions>
+                <Button autoFocus onClick={() => setShowDialog4(false)}>
+                    Cancel
+                </Button>
+                <Button onClick={approve} autoFocus color={approveAction ? 'success' : 'error'}>
+                    {approveAction ? 'Approve' : 'Reject'}
+                </Button>
                 </DialogActions>
             </Dialog>
         </>
