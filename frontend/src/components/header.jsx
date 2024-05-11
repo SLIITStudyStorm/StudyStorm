@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -33,18 +33,39 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [userType, setUserType] = useState('/');
+  const [userType, setUserType] = useState("/");
 
   const { userInfo } = useSelector((state) => state.auth);
   const [openNotifications, setOpenNotifications] = useState(false);
+
+  const [notifications, setNotifications] = useState([]);
+
+  const cardRef = useRef(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const activeRoute = location.pathname;
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        setOpenNotifications(false);
+      }
+    };
 
-  //   get user from local storage
+        setNotifications([
+          { text: "New course added: Introduction to React" },
+          { text: "New course added: Introduction to Node.js" },
+          { text: "New course added: Introduction to Express.js" },
+        ]);
 
+
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
   const SignIn = async () => {
     try {
       //   let { user } = await signInWithGoogle();
@@ -115,17 +136,16 @@ const Header = () => {
     } else {
       setIsSticky(true);
     }
-    
 
     switch (userInfo?.userType) {
       case "ROLE_ADMIN":
-        setUserType('/admin')
+        setUserType("/admin");
         break;
       case "ROLE_INSTRUCTOR":
-        setUserType('/instructor')
+        setUserType("/instructor");
         break;
       default:
-        setUserType('/')
+        setUserType("/");
         break;
     }
   }, []);
@@ -136,6 +156,15 @@ const Header = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCardClick = (event) => {
+    event.stopPropagation(); 
+  };
+
+  const handleNotificationClick = (event) => {
+    event.stopPropagation();
+    setOpenNotifications(!openNotifications); 
   };
 
   const scrollToElement = (id) => {
@@ -442,13 +471,13 @@ const Header = () => {
                 </MenuItem>
               </Menu>
               {userInfo && (
-                  <IconButton
-                    onClick={() => setOpenNotifications(true)} // Open notifications dialog
-                    sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
-                  >
-                    <NotificationsIcon />
-                  </IconButton>
-                )}
+                <IconButton
+                onClick={handleNotificationClick}
+                  sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
+                >
+                  <NotificationsIcon />
+                </IconButton>
+              )}
             </Box>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
@@ -467,32 +496,54 @@ const Header = () => {
                 className={
                   isSticky ? headerStyles.navBtns : headerStyles.navBtns2
                 }
-                sx={{ p: 1, fontWeight: "inherit", marginLeft: 2, backgroundColor: "white", color: "#000000" }}
+                sx={{
+                  p: 1,
+                  fontWeight: "inherit",
+                  marginLeft: 2,
+                  backgroundColor: "white",
+                  color: "#000000",
+                }}
               >
-                 Join Now
+                Join Now
               </Button>
 
               {/* Notifications Dialog */}
             </Box>
           )}
         </Toolbar>
-              <Dialog
-                open={openNotifications}
-                onClose={() => setOpenNotifications(false)}
-              >
-                <DialogTitle>Notifications</DialogTitle>
-                <DialogContent>
-                  {/* Add your notification content here */}
-                  <Typography variant="body2" color="textSecondary">
-                    You have 3 new notifications.
-                  </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpenNotifications(false)}>
-                    Close
-                  </Button>
-                </DialogActions>
-              </Dialog>
+        {/* // Notification Dialog Card */}
+        {openNotifications && (
+          <Card
+            ref={cardRef}
+            sx={{
+              position: "absolute",
+              top: "60px",
+              right: "200px",
+              zIndex: 1000,
+
+              backgroundColor: "#fff",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+              borderRadius: "8px",
+              padding: "10px",
+            }}
+            onClick={handleCardClick}
+          >
+         {notifications.map((notification, index) => (
+          <Card key={index} sx={{ padding: "10px", marginBottom: "10px" }}>
+            <Typography key={index} variant="body2" color="textSecondary">
+              {notification.text}
+            </Typography>
+          </Card>
+            
+          ))}
+          {/* Display message if there are no notifications */}
+          {notifications.length === 0 && (
+            <Typography variant="body2" color="textSecondary">
+              No new notifications.
+            </Typography>
+          )}
+          </Card>
+        )}
       </Container>
     </AppBar>
   );
