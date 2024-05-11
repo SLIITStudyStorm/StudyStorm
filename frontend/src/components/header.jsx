@@ -33,6 +33,7 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [userType, setUserType] = useState('/');
 
   const { userInfo } = useSelector((state) => state.auth);
   const [openNotifications, setOpenNotifications] = useState(false);
@@ -114,6 +115,19 @@ const Header = () => {
     } else {
       setIsSticky(true);
     }
+    
+
+    switch (userInfo?.userType) {
+      case "ROLE_ADMIN":
+        setUserType('/admin')
+        break;
+      case "ROLE_INSTRUCTOR":
+        setUserType('/instructor')
+        break;
+      default:
+        setUserType('/')
+        break;
+    }
   }, []);
 
   const handleOpenUserMenu = (event) => {
@@ -192,7 +206,7 @@ const Header = () => {
                 >
                   Home
                 </Button>
-                <Button
+                {/* <Button
                   onClick={() => {
                     navigate("/epic");
                   }}
@@ -209,28 +223,10 @@ const Header = () => {
                   }
                 >
                   EPIC
-                </Button>
-                {/* <Button
-                  onClick={() => {
-                    navigate("/apod");
-                  }}
-                  sx={{
-                    my: 2,
-                    px: 1,
-                    mx: 1,
-                    color: "inherit",
-                    fontWeight: "inherit",
-                    display: "block",
-                  }}
-                  className={
-                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
-                  }
-                >
-                  APOD
                 </Button> */}
                 <Button
                   onClick={() => {
-                    navigate("/my-courses");
+                    navigate(`${userType}/courses`);
                   }}
                   sx={{
                     my: 2,
@@ -244,9 +240,27 @@ const Header = () => {
                     isSticky ? headerStyles.navBtns : headerStyles.navBtns2
                   }
                 >
-                  My Courses
+                  Courses
                 </Button>
                 {/* <Button
+                  onClick={() => {
+                    navigate("/mars");
+                  }}
+                  sx={{
+                    my: 2,
+                    px: 1,
+                    mx: 1,
+                    color: "inherit",
+                    fontWeight: "inherit",
+                    display: "block",
+                  }}
+                  className={
+                    isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+                  }
+                >
+                  Mars
+                </Button>
+                <Button
                   onClick={() => {
                     navigate("/favourites");
                   }}
@@ -329,9 +343,9 @@ const Header = () => {
             >
               EPIC
             </Button> */}
-            {/* <Button
+            <Button
               onClick={() => {
-                navigate("/apod");
+                navigate(`${userType}/courses`);
               }}
               sx={{
                 my: 2,
@@ -345,29 +359,26 @@ const Header = () => {
                 isSticky ? headerStyles.navBtns : headerStyles.navBtns2
               }
             >
-              APOD
+              COURSES
+            </Button>
+            {/* <Button
+              onClick={() => {
+                navigate("/mars");
+              }}
+              sx={{
+                my: 2,
+                px: 3,
+                mx: 2,
+                color: "inherit",
+                fontWeight: "inherit",
+                display: "block",
+              }}
+              className={
+                isSticky ? headerStyles.navBtns : headerStyles.navBtns2
+              }
+            >
+              Mars
             </Button> */}
-            {userInfo && (
-              <Button
-                onClick={() => {
-                  navigate("/my-courses");
-                }}
-                sx={{
-                  my: 2,
-                  px: 3,
-                  mx: 2,
-                  color: "inherit",
-                  fontWeight: "inherit",
-                  display: "block",
-                }}
-                className={
-                  isSticky ? headerStyles.navBtns : headerStyles.navBtns2
-                }
-              >
-                My Courses
-              </Button>
-            )}
-
             {/* <Button
               onClick={() => {
                 navigate("/favourites");
@@ -431,13 +442,13 @@ const Header = () => {
                 </MenuItem>
               </Menu>
               {userInfo && (
-                <IconButton
-                  onClick={() => setOpenNotifications(true)} // Open notifications dialog
-                  sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
-                >
-                  <NotificationsIcon />
-                </IconButton>
-              )}
+                  <IconButton
+                    onClick={() => setOpenNotifications(true)} // Open notifications dialog
+                    sx={{ p: 1, color: "inherit", borderRadius: 0, ml: 5 }}
+                  >
+                    <NotificationsIcon />
+                  </IconButton>
+                )}
             </Box>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
@@ -456,19 +467,32 @@ const Header = () => {
                 className={
                   isSticky ? headerStyles.navBtns : headerStyles.navBtns2
                 }
-                sx={{
-                  p: 1,
-                  fontWeight: "inherit",
-                  marginLeft: 2,
-                  backgroundColor: "white",
-                  color: "#000000",
-                }}
+                sx={{ p: 1, fontWeight: "inherit", marginLeft: 2, backgroundColor: "white", color: "#000000" }}
               >
-                Join Now
+                 Join Now
               </Button>
+
+              {/* Notifications Dialog */}
             </Box>
           )}
         </Toolbar>
+              <Dialog
+                open={openNotifications}
+                onClose={() => setOpenNotifications(false)}
+              >
+                <DialogTitle>Notifications</DialogTitle>
+                <DialogContent>
+                  {/* Add your notification content here */}
+                  <Typography variant="body2" color="textSecondary">
+                    You have 3 new notifications.
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenNotifications(false)}>
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
       </Container>
     </AppBar>
   );
