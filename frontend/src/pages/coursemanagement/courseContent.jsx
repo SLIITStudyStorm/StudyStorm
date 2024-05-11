@@ -6,9 +6,10 @@ import { courseApi } from "../../utils/api";
 import createFileObjectFromPath from "../../utils/createFileObjectFromPath";
 import dayjs from "dayjs";
 import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
-import { Add, AddCircle, AddCircleOutline, Delete, Edit, ExpandMore, RemoveRedEye } from "@mui/icons-material";
+import { Add, AddCircle, AddCircleOutline, Close, Delete, Edit, ExpandMore, RemoveRedEye } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import FormUploadArea from "../../components/fileUpload";
+import { FileIconList } from "../../data";
 
 const CourseContentPage = () => {
     
@@ -37,6 +38,7 @@ const CourseContentPage = () => {
     const [showDialog2, setShowDialog2] = useState(false);
     const [showDialog3, setShowDialog3] = useState(false);
     const [showDialog4, setShowDialog4] = useState(false);
+    const [showDialog5, setShowDialog5] = useState(false);
 
     const [courseContents, setCourseContents] = useState([]);
     const [contentTitle, setContentTitle] = useState('');
@@ -44,12 +46,15 @@ const CourseContentPage = () => {
     const [contentDesc, setContentDesc] = useState('');
     const [contentTitleError, setContentTitleError] = useState(false);
 
-    
+    const [courseContentDetails, setCourseContentDetails] = useState([]);
     const [contentDetailTitle, setContentDetailTitle] = useState('');
     const [contentDetailDesc, setContentDetailDesc] = useState('');
     const [attatchment, setAttatchment] = useState('');
     const [attatchmentType, setAttatchmentType] = useState('');
     const [contentDetailTitleError, setContentDetailTitleError] = useState(false);
+    const [contentDetailAttatchmentError, setContentDetailAttatchmentError] = useState(false);
+
+    const [detailSrc, setDetailSrc] = useState('');
 
     const { id } = useParams()
     const navigate = useNavigate();
@@ -111,10 +116,38 @@ const CourseContentPage = () => {
             let {data} = await courseApi.get(`/course/content/all`, {params: {page, rows, course_id: id}});
 
             setCourseContents(data.payload.rows);
+
+            let details = {}
+            let content_id;
+            let detailData;
+            if(data.payload.rows){
+                for(let i = 0; i < data.payload.rows.length; i++){
+                    content_id = data.payload.rows[i].content_id;
+                    detailData = await fetchCourseContentDetails(content_id);
+                    details[content_id] = detailData
+                }
+            }
+            setCourseContentDetails(details)
+
             // toast.success(data.message);
         } catch (error) {
             setCourseContents([]);
             toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchCourseContentDetails = async(content_id, page = 1, rows = 50) => {
+        try {
+            setIsLoading(true);
+            let {data} = await courseApi.get(`/course/content/detail/all`, {params: {page, rows, content_id}});
+
+            return (data.payload.rows);
+            // toast.success(data.message);
+        } catch (error) {
+            return ([]);
+            // toast.error(error.response?.data?.message || error.message);
         } finally {
             setIsLoading(false);
         }
@@ -174,12 +207,54 @@ const CourseContentPage = () => {
     }
 
     const onSelect = (files) => {
-        setAttatchment(files);
+        setAttatchment(files[0]);
         setAttatchmentType(files.map((file) => file.name.split('.').pop()));
     }
 
+    const promptContentDetailDialog = (id) => {
+        setContentId(id)
+        console.log(id);
+        setContentDetailTitle('')
+        setContentDetailDesc('')
+        setAttatchmentType('')
+        setAttatchment('')
+        setShowDialog3(true); 
+    }
+
     const handleContentDetailSubmit = async() => {
-        
+        try {
+
+            if(!contentDetailTitle) setContentDetailTitleError(true);
+
+            if(!attatchment) setContentDetailAttatchmentError(true);
+            
+            if(!contentDetailTitle){
+                throw new Error('Content Detail Title is required');
+            }
+            
+            let formData = new FormData()
+            formData.append('content_id', contentId)
+            formData.append('desc', contentDetailDesc)
+            formData.append('title', contentDetailTitle)
+            formData.append('attatchment_type', attatchmentType)
+
+            if(contType == 'link'){
+                formData.append('link', attatchment)
+            }
+            else {
+                formData.append('attatchment', attatchment)
+            }
+
+            console.log(formData);
+            let res = await courseApi.post("/course/content/detail/create", formData);
+            console.log(res);
+
+            await fetchCourseContents()
+            toast.success(res.data.message);
+            setShowDialog3(false)
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        }
     }
 
     const promptDeleteContent = (course_id) => {
@@ -199,6 +274,31 @@ const CourseContentPage = () => {
             setIsLoading(false);
             setShowDialog2(false);
             setContentId('');
+        }
+    }
+
+    const getFileType = (type) => {
+        return FileIconList.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
+    }
+
+    const handleCourseContentDetailClick = (detail) => {
+        let link = detail.attatchment;
+
+
+        if(detail.attatchment_type == 'link'){
+            window.open(link, '_blank')
+        }
+        else if(detail.attatchment_type == 'pdf'){
+            link = import.meta.env.VITE_COURSE_SERVER_URL+ detail.attatchment +'?view=fit'
+            setDetailSrc(link); 
+            setShowDialog5(true)
+        }
+        else {
+            link = import.meta.env.VITE_COURSE_SERVER_URL+ detail.attatchment
+            const anchor = document.createElement('a');
+            anchor.href = link;
+            anchor.download = detail.title;
+            anchor.click();
         }
     }
 
@@ -282,16 +382,29 @@ const CourseContentPage = () => {
                                     }
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Typography fontWeight={700} marginBottom={'15px'}>{content.subtitle}</Typography>
+                                    {content.subtitle && <Typography fontWeight={700} marginBottom={'15px'}>{content.subtitle}</Typography>}
+                                    {content.desc &&
                                     <Typography>
                                         {content.desc}
                                     </Typography>
+                                    }
                                     <br />
-
+                                    {courseContentDetails[content.content_id]?.map((detail, index) => (
+                                        <>
+                                            <Grid container key={index} spacing={2}>
+                                                <Grid item md={.3}>
+                                                    <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
+                                                </Grid>
+                                                <Grid item md={11}>
+                                                    <Typography style={{cursor:'pointer'}} onClick={() => handleCourseContentDetailClick(detail)}>{detail.title}</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </>
+                                    ))}
                                     {
                                         editable &&
                                         <>
-                                            <Button style={{margin:'5px', padding:'10px'}} onClick={() => setShowDialog3(true)}><AddCircleOutline /> &nbsp;&nbsp;&nbsp;Add Content</Button>
+                                            <Button style={{margin:'5px', padding:'10px'}} onClick={() => promptContentDetailDialog(content.content_id)}><AddCircleOutline /> &nbsp;&nbsp;&nbsp;Add Content</Button>
                                         </>
                                     }
                                 </AccordionDetails>
@@ -436,24 +549,33 @@ const CourseContentPage = () => {
                     <br />
                     <br />
                     {contType == 'file' ?
-                    <FormUploadArea 
+                    <><FormUploadArea 
                         accept="*" 
-                        multiple={true} 
+                        multiple={false} 
                         maxFileSize={1000000000000000}  
                         label={"Files"}
                         selectfunc={onSelect}
                     />
+                    <Typography variant="caption" display={contentDetailAttatchmentError ? 'block' : 'none'} color={"red"} gutterBottom>
+                        *{"Attatchment is required"}
+                    </Typography></>
                     :
-                    <TextField 
+                    <><TextField 
                         variant="outlined" size="small" 
                         label="Link" placeholder="Link" 
                         fullWidth
                         value={attatchment}
                         onChange={(e) => {
-                            setAttatchment([e.target.value])
-                            setAttatchmentType(['link'])
+                            setAttatchment(e.target.value)
+                            setAttatchmentType('link')
+
+                            if(!e.target.value) setContentDetailAttatchmentError(true);
+                            else setContentDetailAttatchmentError(false);
                         }}
                     />
+                    <Typography variant="caption" display={contentDetailAttatchmentError ? 'block' : 'none'} color={"red"} gutterBottom>
+                        *{"Link is required"}
+                    </Typography></>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -481,6 +603,20 @@ const CourseContentPage = () => {
                     {approveAction ? 'Approve' : 'Reject'}
                 </Button>
                 </DialogActions>
+            </Dialog>
+            
+            <Dialog
+                open={showDialog5}
+                onClose={() => setShowDialog5(false)}
+                fullScreen
+            >
+                <DialogTitle textAlign={'right'}>
+                    <IconButton><Close onClick={() => setShowDialog5(false)} /></IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <iframe src={detailSrc} onError={() => setShowDialog5(false)} width={'100%'} height={'100%'}/>
+                </DialogContent>
+                
             </Dialog>
         </>
     );
