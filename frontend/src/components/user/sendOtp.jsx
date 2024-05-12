@@ -42,7 +42,7 @@ export default function SendOtp({ email, setEmail, setSendOtpState, setVerifyOtp
 
     } catch (error) {
       console.error("Forgot password request failed!", error);
-      toast.error(" Failed to send password reset email! Please try again.");
+      toast.error(" Failed to send password reset OTP! Please try again.");
       setSuccess(false);
       setError(true);
     }
