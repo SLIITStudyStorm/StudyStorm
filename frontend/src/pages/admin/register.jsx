@@ -80,7 +80,7 @@ export default function AdminRegisterPage() {
     <ThemeProvider theme={theme}>
       <Container
         component="main"
-        maxWidth="lg"
+        maxWidth="sm"
         sx={{
           backgroundColor: "#f5f5f5",
           borderRadius: "10px",

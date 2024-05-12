@@ -23,7 +23,7 @@ const HomePage = () => {
         setCourses(data.payload.rows);
         setFilteredCourses(data.payload.rows);
       } catch (error) {
-        toast.error(error.response?.data?.message || error.message);
+        // toast.error(error.response?.data?.message || error.message);
       } finally {
         setIsLoading(false);
       }
