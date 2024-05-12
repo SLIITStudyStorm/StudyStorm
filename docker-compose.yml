@@ -11,16 +11,23 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data_auth:/var/lib/mysql
 
   course-db:
     image: mysql:latest
     restart: always
     container_name: course-db
-    ports:
-      - "3308:3306"
     env_file:
       - ./backend/CourseManagementService/.env
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data_course:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  # Health check command
+      timeout: 10s
+      retries: 5
+      interval: 5s
 
   notification-db:
     image: mongo:latest
@@ -31,26 +38,20 @@ services:
     env_file:
       - ./backend/NotificationService/.env
 
-  # auth-service:
-  #   build:
-  #     context: ./backend/AuthenticationService
-  #     dockerfile: Dockerfile
-  #   container_name: auth-service
-  #   restart: always
-  #   depends_on:
-  #     - auth-db
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth
-  #     SPRING_DATASOURCE_USERNAME: root
-  #     SPRING_DATASOURCE_PASSWORD: password
-  #     MAIL_HOST: smtp.gmail.com
-  #     MAIL_PORT: 587
-  #     MAIL_USERNAME: avishkatest123@gmail.com
-  #     MAIL_PASSWORD: rvhe fqfh npka kfan
-  #     MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'true'
-  #     MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'true'
-  #   ports:
-  #     - "8080:8080"
+  auth-service:
+    build:
+      context: ./backend/AuthenticationService
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    depends_on:
+      - auth-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-db:3306/auth
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
 
   course-service:
     build:
@@ -62,7 +63,8 @@ services:
     env_file:
       - ./backend/CourseManagementService/.env
     depends_on:
-      - course-db
+      course-db:
+        condition: service_healthy
 
   notification-service:
     build:
@@ -87,4 +89,5 @@ services:
       - ./frontend/.env
 
 volumes:
-  mysql_data:
+  mysql_data_auth:
+  mysql_data_course:
