@@ -141,50 +141,96 @@ const CourseContentPage = () => {
     }
 
     const handleCourseContentDetailClick = async (detail) => {
-        console.log('Clicked detail:', detail);
+      console.log('Clicked detail:', detail);
+  
+      let link = detail.attatchment;
+  
+      const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
+      if (checkbox) {
+          checkbox.checked = true;
+      }
+  
+      try {
+          console.log('Sending progress tracking request...');
+          console.log('User email:', userInfo.email);
+          console.log('Content ID:', detail.detail_id);
+          console.log('Course ID:', id);
+          const payload = {
+              courseId: id,
+              userEmail: userInfo.email,
+              pdfIds: [detail.detail_id] // Wrap detail_id in an array
+          };
+  
+          // Send the request to the backend
+          const response = await learnerApi.post('/progress/tracking', payload);
+  
+          console.log('Progress tracked successfully:', response.data);
+  
+          // Check if all tasks are completed
+          if (completedPDFCount + 1 === totalContentDetailsCount) {
+              // Generate and download certificate
+              generateCertificate();
+          }
+      } catch (error) {
+          console.error('Error tracking progress:', error);
+          // Handle the error here, e.g., show a toast notification
+          toast.error('Error tracking progress. Please try again later.');
+      }
+  
+      if (detail.attatchment_type == 'link') {
+          window.open(link, '_blank');
+      } else if (detail.attatchment_type == 'pdf') {
+          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
+          setDetailSrc(link);
+          setShowDialog5(true);
+      } else {
+          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
+          const anchor = document.createElement('a');
+          anchor.href = link;
+          anchor.download = detail.title;
+          anchor.click();
+      }
+  }
+  
+  
+    const generateCertificate = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
 
-        let link = detail.attatchment;
+      const background = new Image();
+      background.src = CertificateBackground;
+      background.onload = () => {
+          ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-        const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
-        if (checkbox) {
-            checkbox.checked = true;
-        }
+          ctx.font = 'bold 40px Arial';
+          ctx.fillStyle = '#000';
+          ctx.textAlign = 'center';
+          ctx.fillText('Certificate of Completion', canvas.width / 2, 200);
 
-        try {
-            console.log('Sending progress tracking request...');
-            console.log('User email:', userInfo.email);
-            console.log('Content ID:', detail.detail_id);
-            console.log('Course ID:', id);
-            const payload = {
-                courseId: id,
-                userEmail: userInfo.email,
-                pdfIds: [detail.detail_id] // Wrap detail_id in an array
-            };
+          ctx.font = '24px Arial';
+          ctx.fillText(`This is to certify that ${userInfo.firstname}`, canvas.width / 2, 300);
+          ctx.fillText(`has successfully completed the course`, canvas.width / 2, 350);
+          ctx.fillText(`${title}`, canvas.width / 2, 400);
+          ctx.fillText(`issued on ${dayjs().format('MMMM DD, YYYY')}`, canvas.width / 2, 450);
 
-            // Send the request to the backend
-            const response = await learnerApi.post('/progress/tracking', payload);
+          const logo = new Image();
+          logo.src = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fbeautiful%2F&psig=AOvVaw1pp5Le6aEUDZPs2OpDrLsO&ust=1715621404638000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNjp4fXRiIYDFQAAAAAdAAAAABAE"; // Replace with your website logo URL
+          logo.onload = () => {
+              ctx.drawImage(logo, canvas.width - 200, canvas.height - 100, 150, 50);
 
-            console.log('Progress tracked successfully:', response.data);
-        } catch (error) {
-            console.error('Error tracking progress:', error);
-            // Handle the error here, e.g., show a toast notification
-            toast.error('Error tracking progress. Please try again later.');
-        }
+              const dataUrl = canvas.toDataURL();
 
-        if (detail.attatchment_type == 'link') {
-            window.open(link, '_blank');
-        } else if (detail.attatchment_type == 'pdf') {
-            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
-            setDetailSrc(link);
-            setShowDialog5(true);
-        } else {
-            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
-            const anchor = document.createElement('a');
-            anchor.href = link;
-            anchor.download = detail.title;
-            anchor.click();
-        }
-    }
+              const link = document.createElement('a');
+              link.href = dataUrl;
+              link.download = 'certificate.png';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+          };
+      };
+  }
 
     useEffect(() => {
         fetchCourse();
@@ -206,27 +252,32 @@ const CourseContentPage = () => {
                                         <img src={import.meta.env.VITE_COURSE_SERVER_URL + thumbnail} onError={(event) => { event.target.src = "/default.png" }} alt={title} style={{ width: '100%', height: 'auto', maxHeight: '350px', objectFit: 'cover', borderRadius: '5px' }} />
                                     </Grid>
                                     <Grid item xs={12} sm={9} md={12} lg={9}>
-                                        <Grid container spacing={2} height={'100%'}>
-                                            <Grid item xs={12} sm={12} md={12} lg={12}>
-                                                <Typography fontSize={25}>{title}</Typography>
-                                                <p>{desc}</p>
-                                                <p>Start Date: {new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                                <br />
-                                                <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
-                                                <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={12} lg={12} style={{ position: 'absolute', top: 100, right: 200 }}>
-                                                <Card elevation={3} style={{ padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
-                                                    <Typography variant="h6" align="right">Progress</Typography>
-                                                    <div style={{ width: 100, height: 100 }}>
-                                                        <CircularProgressbar value={completedPercentage} text={`${completedPercentage}%`} />
-                                                    </div>
-                                                    <Typography align="right">PDFs Completed: {completedPDFCount}</Typography>
-                                                    <Typography align="right">Total Content Details: {totalContentDetailsCount}</Typography>
-                                                </Card>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
+    <Grid container spacing={2} height={'100%'}>
+    <Grid item xs={12} sm={9} md={12} lg={9}>
+    <Grid container spacing={2} height={'100%'}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Typography fontSize={25}>{title}</Typography>
+            <p>{desc}</p>
+            <p>Start Date: {new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <br />
+            <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
+            <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
+        </Grid>
+    </Grid>
+</Grid>
+<Grid item xs={12} sm={3} md={12} lg={3} justifyContent="flex-end">
+    <Card elevation={3} style={{ padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
+        <Typography variant="h6" align="center" padding={2}>Progress</Typography>
+        <div style={{ width: 100, height: 100, margin: 'auto' }}>
+            <CircularProgressbar value={completedPercentage} text={`${completedPercentage}%`} />
+        </div>
+        <Typography align="center" padding={2}>Completed: {completedPDFCount}   out of {totalContentDetailsCount}</Typography>
+    </Card>
+</Grid>
+
+    </Grid>
+</Grid>
+
                                 </Grid>
                             </CardContent>
                         </Card>
