@@ -11,7 +11,6 @@ import { FileIconList } from "../../data";
 import CourseContentStyles from './courseContent.module.css';
 
 const CourseContentPage = () => {
-
     const [isLoading, setIsLoading] = useState(false);
     const [thumbnail, setThumbnail] = useState('');
     const [title, setTitle] = useState('');
@@ -27,13 +26,13 @@ const CourseContentPage = () => {
     const [price, setPrice] = useState(0);
     const [approved, setApproved] = useState(false);
     const [showDialog5, setShowDialog5] = useState(false);
+    const [completedPDFCount, setCompletedPDFCount] = useState(0); // State to hold completed PDF count
 
     const [courseContents, setCourseContents] = useState([]);
     const [courseContentDetails, setCourseContentDetails] = useState([]);
     const [detailSrc, setDetailSrc] = useState('');
 
     const { id } = useParams();
-
     const userInfo = useSelector((state) => state.auth.userInfo);
 
     const fetchCourse = async () => {
@@ -56,6 +55,7 @@ const CourseContentPage = () => {
             setThumbnail(data.payload.thumbnail);
 
             await fetchCourseContents();
+            await fetchProgress(); // Fetch progress after fetching course details
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         } finally {
@@ -71,12 +71,10 @@ const CourseContentPage = () => {
             setCourseContents(data.payload.rows);
 
             let details = {};
-            let content_id;
-            let detailData;
             if (data.payload.rows) {
                 for (let i = 0; i < data.payload.rows.length; i++) {
-                    content_id = data.payload.rows[i].content_id;
-                    detailData = await fetchCourseContentDetails(content_id);
+                    const content_id = data.payload.rows[i].content_id;
+                    const detailData = await fetchCourseContentDetails(content_id);
                     details[content_id] = detailData;
                 }
             }
@@ -102,56 +100,70 @@ const CourseContentPage = () => {
         }
     }
 
+    const fetchProgress = async () => {
+        try {
+            setIsLoading(true);
+            const response = await learnerApi.get(`/progress/tracking/${userInfo.email}/${id}`);
+            const { progress } = response.data;
+            if (progress && progress.pdfIds) {
+                setCompletedPDFCount(progress.pdfIds.length); // Set the completed PDF count
+            }
+        } catch (error) {
+            toast.error('Error fetching progress. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const getFileType = (type) => {
         return FileIconList.find(file => type.includes(file.name))?.src || "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png";
     }
 
     const handleCourseContentDetailClick = async (detail) => {
-      console.log('Clicked detail:', detail);
-  
-      let link = detail.attatchment;
-  
-      const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
-      if (checkbox) {
-          checkbox.checked = true;
-      }
-  
-      try {
-          console.log('Sending progress tracking request...');
-          console.log('User email:', userInfo.email);
-          console.log('Content ID:', detail.detail_id);
-          console.log('Course ID:', id);
-          const payload = {
-            courseId: id,
-            userEmail: userInfo.email,
-            pdfIds: [detail.detail_id] // Wrap detail_id in an array
-        };
+        console.log('Clicked detail:', detail);
 
-        // Send the request to the backend
-        const response = await learnerApi.post('/progress/tracking', payload);
+        let link = detail.attatchment;
 
-        console.log('Progress tracked successfully:', response.data);
-    } catch (error) {
-        console.error('Error tracking progress:', error);
-        // Handle the error here, e.g., show a toast notification
-        toast.error('Error tracking progress. Please try again later.');
+        const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+
+        try {
+            console.log('Sending progress tracking request...');
+            console.log('User email:', userInfo.email);
+            console.log('Content ID:', detail.detail_id);
+            console.log('Course ID:', id);
+            const payload = {
+                courseId: id,
+                userEmail: userInfo.email,
+                pdfIds: [detail.detail_id] // Wrap detail_id in an array
+            };
+
+            // Send the request to the backend
+            const response = await learnerApi.post('/progress/tracking', payload);
+
+            console.log('Progress tracked successfully:', response.data);
+        } catch (error) {
+            console.error('Error tracking progress:', error);
+            // Handle the error here, e.g., show a toast notification
+            toast.error('Error tracking progress. Please try again later.');
+        }
+
+        if (detail.attatchment_type == 'link') {
+            window.open(link, '_blank');
+        } else if (detail.attatchment_type == 'pdf') {
+            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
+            setDetailSrc(link);
+            setShowDialog5(true);
+        } else {
+            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
+            const anchor = document.createElement('a');
+            anchor.href = link;
+            anchor.download = detail.title;
+            anchor.click();
+        }
     }
-  
-      if (detail.attatchment_type == 'link') {
-          window.open(link, '_blank');
-      } else if (detail.attatchment_type == 'pdf') {
-          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
-          setDetailSrc(link);
-          setShowDialog5(true);
-      } else {
-          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
-          const anchor = document.createElement('a');
-          anchor.href = link;
-          anchor.download = detail.title;
-          anchor.click();
-      }
-  }
-  
 
     useEffect(() => {
         fetchCourse();
@@ -178,6 +190,7 @@ const CourseContentPage = () => {
                                                 <br />
                                                 <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
                                                 <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
+                                                <Typography fontSize={15}>PDFs Completed: {completedPDFCount}</Typography> {/* Display completed PDF count */}
                                             </Grid>
                                         </Grid>
                                     </Grid>
