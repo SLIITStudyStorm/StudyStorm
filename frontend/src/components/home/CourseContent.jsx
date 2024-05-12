@@ -9,6 +9,8 @@ import { Close } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { FileIconList } from "../../data";
 import CourseContentStyles from './courseContent.module.css';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const CourseContentPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +29,8 @@ const CourseContentPage = () => {
     const [approved, setApproved] = useState(false);
     const [showDialog5, setShowDialog5] = useState(false);
     const [completedPDFCount, setCompletedPDFCount] = useState(0); // State to hold completed PDF count
+    const [totalContentDetailsCount, setTotalContentDetailsCount] = useState(0); // State to hold total content details count
+    const [completedDetails, setCompletedDetails] = useState([]); // State to hold completed content details
 
     const [courseContents, setCourseContents] = useState([]);
     const [courseContentDetails, setCourseContentDetails] = useState([]);
@@ -39,6 +43,8 @@ const CourseContentPage = () => {
         try {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/one/${id}`);
+
+            console.log('Fetched course data:', data);
 
             setTitle(data.payload.name);
             setCustomCrumb(data.payload.name);
@@ -68,17 +74,22 @@ const CourseContentPage = () => {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/content/all`, { params: { page, rows, course_id: id } });
 
+            console.log('Fetched course contents:', data);
+
             setCourseContents(data.payload.rows);
 
             let details = {};
+            let totalDetailsCount = 0; // Initialize total details count
             if (data.payload.rows) {
                 for (let i = 0; i < data.payload.rows.length; i++) {
                     const content_id = data.payload.rows[i].content_id;
                     const detailData = await fetchCourseContentDetails(content_id);
                     details[content_id] = detailData;
+                    totalDetailsCount += detailData.length; // Accumulate the count of details
                 }
             }
             setCourseContentDetails(details);
+            setTotalContentDetailsCount(totalDetailsCount); // Set the total content details count
         } catch (error) {
             setCourseContents([]);
             toast.error(error.response?.data?.message || error.message);
@@ -91,6 +102,8 @@ const CourseContentPage = () => {
         try {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/content/detail/all`, { params: { page, rows, content_id } });
+
+            console.log('Fetched course content details:', data);
 
             return data.payload.rows;
         } catch (error) {
@@ -107,6 +120,14 @@ const CourseContentPage = () => {
             const { progress } = response.data;
             if (progress && progress.pdfIds) {
                 setCompletedPDFCount(progress.pdfIds.length); // Set the completed PDF count
+
+                // Fetch content details for completed PDFs
+                const completedContentDetails = [];
+                for (const pdfId of progress.pdfIds) {
+                    const { data } = await courseApi.get(`/course/content/detail/all`, { params: { pdf_id: pdfId } });
+                    completedContentDetails.push(...data.payload.rows.map(detail => detail.detail_id));
+                }
+                setCompletedDetails(completedContentDetails);
             }
         } catch (error) {
             toast.error('Error fetching progress. Please try again later.');
@@ -169,6 +190,9 @@ const CourseContentPage = () => {
         fetchCourse();
     }, []);
 
+    // Calculate the percentage of completed PDFs
+    const completedPercentage = totalContentDetailsCount === 0 ? 0 : Math.round((completedPDFCount / totalContentDetailsCount) * 100);
+
     return (
         <>
             <div style={{ width: '100%', padding: '20px', display: 'flex', flexDirection: 'column' }}>
@@ -190,7 +214,16 @@ const CourseContentPage = () => {
                                                 <br />
                                                 <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
                                                 <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
-                                                <Typography fontSize={15}>PDFs Completed: {completedPDFCount}</Typography> {/* Display completed PDF count */}
+                                            </Grid>
+                                            <Grid item xs={12} sm={12} md={12} lg={12} style={{ position: 'absolute', top: 100, right: 200 }}>
+                                                <Card elevation={3} style={{ padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
+                                                    <Typography variant="h6" align="right">Progress</Typography>
+                                                    <div style={{ width: 100, height: 100 }}>
+                                                        <CircularProgressbar value={completedPercentage} text={`${completedPercentage}%`} />
+                                                    </div>
+                                                    <Typography align="right">PDFs Completed: {completedPDFCount}</Typography>
+                                                    <Typography align="right">Total Content Details: {totalContentDetailsCount}</Typography>
+                                                </Card>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -204,9 +237,9 @@ const CourseContentPage = () => {
                                 <AccordionDetails>
                                     <br />
                                     {courseContentDetails[content.content_id]?.map((detail, index) => (
-                                        <Grid container key={index} spacing={0} alignItems={'center'} className={CourseContentStyles.fileRow}>
+                                        <Grid container key={index} spacing={0} alignItems={'center'} className={`${CourseContentStyles.fileRow} ${completedDetails.includes(detail.detail_id) ? CourseContentStyles.completedTask : ''}`}>
                                             <Grid item md={.4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                                <input type="checkbox" name={`content_${detail.detail_id}`} />
+                                                <input type="checkbox" name={`content_${detail.detail_id}`} defaultChecked={completedDetails.includes(detail.detail_id)} />
                                             </Grid>
                                             <Grid item md={.4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                                                 <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
