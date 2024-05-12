@@ -87,8 +87,12 @@ export default function LoginPage() {
       navigate("/");
     } catch (error) {
       // Handle error response, e.g., display error message
-      console.error("Login failed!", error);
-      toast.error(error.response?.data?.message || error.message);
+      console.log("Login failed!", error);
+      if (error.name === "AxiosError") {
+        toast.error("Incorrect email or password");
+      }else{
+        toast.error(error.response?.data?.message || error.message);
+      }
       setSuccess(false);
       setError(true);
     }

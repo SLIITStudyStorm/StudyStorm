@@ -9,6 +9,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Grid from "@mui/material/Grid";
+import { toast } from "react-toastify";
+
 import {
   Dialog,
   DialogActions,
@@ -119,11 +121,21 @@ const passwordPayload = {
     try {
       const response = await authApi.patch(`/v1/${url}`, payload)
       console.log(response);
+      if(response.data === "Password changed successfully") {
+        toast.success("Profile updated successfully! Please login again.");
+      }
+      else{
+        toast.error(response.data)
+        return;
+      }
+      
       localStorage.clear();
       navigate("/login")
 
     } catch (error) {
       console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+
     }
 
 
