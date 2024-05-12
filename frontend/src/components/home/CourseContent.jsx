@@ -107,47 +107,51 @@ const CourseContentPage = () => {
     }
 
     const handleCourseContentDetailClick = async (detail) => {
-        console.log('Clicked detail:', detail);
+      console.log('Clicked detail:', detail);
+  
+      let link = detail.attatchment;
+  
+      const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
+      if (checkbox) {
+          checkbox.checked = true;
+      }
+  
+      try {
+          console.log('Sending progress tracking request...');
+          console.log('User email:', userInfo.email);
+          console.log('Content ID:', detail.detail_id);
+          console.log('Course ID:', id);
+          const payload = {
+            courseId: id,
+            userEmail: userInfo.email,
+            pdfIds: [detail.detail_id] // Wrap detail_id in an array
+        };
 
-        let link = detail.attatchment;
+        // Send the request to the backend
+        const response = await learnerApi.post('/progress/tracking', payload);
 
-        const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
-        if (checkbox) {
-            checkbox.checked = true;
-        }
-
-        try {
-            console.log('Sending progress tracking request...');
-            console.log('User email:', userInfo.email);
-            console.log('Content ID:', detail.detail_id);
-            console.log('Course ID:', id);
-            const response = await learnerApi.post(
-                '/progress/tracking',
-                {
-                    courseId: id,
-                    userEmail: userInfo.email,
-                    pdfIds: detail.detail_id
-                }
-            );
-            console.log('Progress tracked successfully:', response.data);
-        } catch (error) {
-            console.error('Error tracking progress:', error);
-        }
-
-        if (detail.attatchment_type == 'link') {
-            window.open(link, '_blank');
-        } else if (detail.attatchment_type == 'pdf') {
-            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
-            setDetailSrc(link);
-            setShowDialog5(true);
-        } else {
-            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
-            const anchor = document.createElement('a');
-            anchor.href = link;
-            anchor.download = detail.title;
-            anchor.click();
-        }
+        console.log('Progress tracked successfully:', response.data);
+    } catch (error) {
+        console.error('Error tracking progress:', error);
+        // Handle the error here, e.g., show a toast notification
+        toast.error('Error tracking progress. Please try again later.');
     }
+  
+      if (detail.attatchment_type == 'link') {
+          window.open(link, '_blank');
+      } else if (detail.attatchment_type == 'pdf') {
+          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
+          setDetailSrc(link);
+          setShowDialog5(true);
+      } else {
+          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
+          const anchor = document.createElement('a');
+          anchor.href = link;
+          anchor.download = detail.title;
+          anchor.click();
+      }
+  }
+  
 
     useEffect(() => {
         fetchCourse();
