@@ -145,6 +145,9 @@ const Header = () => {
       case "ROLE_INSTRUCTOR":
         setUserType("/instructor");
         break;
+      case "ROLE_LEARNER":
+        setUserType("/learner");
+        break;
       default:
         setUserType("/");
         break;
@@ -375,7 +378,7 @@ const Header = () => {
               COURSES
             </Button>
 
-            {userInfo && userInfo.userType === "ROLE_LEARNER" && (
+            {/*userInfo && userInfo.userType === "ROLE_LEARNER" && (
               <Button
                 onClick={() => {
                   navigate("/my-courses");
@@ -394,7 +397,7 @@ const Header = () => {
               >
                 My Courses
               </Button>
-            )}
+            ))*/}
 
             {userInfo && userInfo.userType === "ROLE_ADMIN" && (
               <Button

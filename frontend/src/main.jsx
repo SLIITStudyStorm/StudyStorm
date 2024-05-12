@@ -47,12 +47,13 @@ const router = createBrowserRouter(
       <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
       <Route path="/course-details/:id" element ={<CourseDetailsPage />} /> 
       <Route path="/paymentPage" element={<CardPage />} />
-      <Route path="/my-courses" element={<MyCoursesPage />} />
-      <Route path="/my-courses/course/:id" element={<CourseContent />} />
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/user/profile" element={<UserProfilePage />} />
+
+        <Route path="/learner/courses" element={<MyCoursesPage />} />
+        <Route path="/learner/course/:id" element={<CourseContent />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute />}>

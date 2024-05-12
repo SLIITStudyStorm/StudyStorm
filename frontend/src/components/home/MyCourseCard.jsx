@@ -46,7 +46,7 @@ const MyCourseCard = ({ course, onDelete }) => {
                     <Delete />
                   </IconButton>
                   {/* Use Link to navigate to the course */}
-                  <Link to={`/my-courses/course/${course.course_id}`}>
+                  <Link to={`/learner/course/${course.course_id}`}>
                     <IconButton>
                       <Visibility />
                     </IconButton>
