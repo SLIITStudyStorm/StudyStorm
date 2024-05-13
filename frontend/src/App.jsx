@@ -16,10 +16,12 @@ const App = () => {
       case '/':
         document.title = `StudyStorm | Home`;
         break;
-      case '/instructor/courses' || '/admin/courses':
+      case '/instructor/courses':
+      case '/admin/courses':
         document.title = `StudyStorm | Courses`;
         break;
-      case `/instructor/courses/${id}` || `/admin/courses/${id}`:
+      case `/instructor/courses/${id}`:
+      case `/admin/courses/${id}`:
         document.title = `StudyStorm | Course`;
         break;
       case '/instructor/courses/create':
@@ -34,7 +36,9 @@ const App = () => {
       case '/register':
         document.title = `StudyStorm | Register`;
         break;
-      case '/user/profile':
+      case '/learner':
+      case '/admin':
+      case '/instrutor':
         document.title = `StudyStorm | Profile`;
         break;
       case '/forgotpassword':
@@ -45,7 +49,7 @@ const App = () => {
         break;
     }
 
-    if (location.pathname.includes('/admin') || location.pathname.includes('/instructor')) {
+    if (location.pathname.includes('/admin') || location.pathname.includes('/instructor') || location.pathname.includes('/learner')) {
       setShowHeader(false);
     } else { 
       setShowHeader(true);

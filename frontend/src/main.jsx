@@ -50,7 +50,9 @@ const router = createBrowserRouter(
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
-        <Route path="/user/profile" element={<UserProfilePage />} />
+        <Route path="/learner" element={<UserProfilePage />} />
+        <Route path="/admin" element={<UserProfilePage />} />
+        <Route path="/instructor" element={<UserProfilePage />} />
 
         <Route path="/learner/courses" element={<MyCoursesPage />} />
         <Route path="/learner/course/:id" element={<CourseContent />} />

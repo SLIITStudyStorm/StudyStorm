@@ -108,7 +108,7 @@ const Header = () => {
 
   const profileHandle = () => {
     setAnchorElUser(null);
-    navigate("/user/profile");
+    navigate(userType);
   };
 
   let timeout;

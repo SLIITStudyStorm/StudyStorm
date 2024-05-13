@@ -38,6 +38,15 @@ services:
     environment:
       MONGODB_CONNECTION_STRING: "mongodb+srv://avishkanuwan73:12345Avishka@cluster0.ijwojwx.mongodb.net/test"
 
+  learner-db:
+    image: mongo:latest
+    restart: always
+    container_name: learner-db
+    ports:
+      - "27017"
+    environment:
+      MONGODB_CONNECTION_STRING: "mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&"
+
   auth-service:
     build:
       context: ./backend/AuthenticationService
@@ -85,6 +94,19 @@ services:
       PASSWORD: 'rvhe fqfh npka kfan'
     depends_on:
       - notification-db
+
+  learner-service:
+    build:
+      context: ./backend/LearnerService
+      dockerfile: Dockerfile
+    container_name: learner-service
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      MONGODB_URL: mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&
+    depends_on:
+      - learner-db
       
   studystorm-app:
     build:
