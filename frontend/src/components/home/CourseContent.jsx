@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { courseApi, learnerApi } from "../../utils/api";
 import dayjs from "dayjs";
-import { Accordion, AccordionDetails, Backdrop, Card, CardContent, CircularProgress, Dialog, DialogContent, DialogTitle, Grid, IconButton, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, Backdrop, Card, CardContent, CircularProgress, Dialog, DialogContent, DialogTitle, Grid, IconButton, Typography, Button } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { FileIconList } from "../../data";
 import CourseContentStyles from './courseContent.module.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import CertificateBackground from '../../../public/LogoBig1.png'; // Import your certificate background image
 
 const CourseContentPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,7 @@ const CourseContentPage = () => {
     const [courseContents, setCourseContents] = useState([]);
     const [courseContentDetails, setCourseContentDetails] = useState([]);
     const [detailSrc, setDetailSrc] = useState('');
+    const [showCertificateButton, setShowCertificateButton] = useState(false);
 
     const { id } = useParams();
     const userInfo = useSelector((state) => state.auth.userInfo);
@@ -43,8 +45,6 @@ const CourseContentPage = () => {
         try {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/one/${id}`);
-
-            console.log('Fetched course data:', data);
 
             setTitle(data.payload.name);
             setCustomCrumb(data.payload.name);
@@ -74,8 +74,6 @@ const CourseContentPage = () => {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/content/all`, { params: { page, rows, course_id: id } });
 
-            console.log('Fetched course contents:', data);
-
             setCourseContents(data.payload.rows);
 
             let details = {};
@@ -102,8 +100,6 @@ const CourseContentPage = () => {
         try {
             setIsLoading(true);
             let { data } = await courseApi.get(`/course/content/detail/all`, { params: { page, rows, content_id } });
-
-            console.log('Fetched course content details:', data);
 
             return data.payload.rows;
         } catch (error) {
@@ -141,103 +137,102 @@ const CourseContentPage = () => {
     }
 
     const handleCourseContentDetailClick = async (detail) => {
-      console.log('Clicked detail:', detail);
-  
-      let link = detail.attatchment;
-  
-      const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
-      if (checkbox) {
-          checkbox.checked = true;
-      }
-  
-      try {
-          console.log('Sending progress tracking request...');
-          console.log('User email:', userInfo.email);
-          console.log('Content ID:', detail.detail_id);
-          console.log('Course ID:', id);
-          const payload = {
-              courseId: id,
-              userEmail: userInfo.email,
-              pdfIds: [detail.detail_id] // Wrap detail_id in an array
-          };
-  
-          // Send the request to the backend
-          const response = await learnerApi.post('/progress/tracking', payload);
-  
-          console.log('Progress tracked successfully:', response.data);
-  
-          // Check if all tasks are completed
-          if (completedPDFCount + 1 === totalContentDetailsCount) {
-              // Generate and download certificate
-              generateCertificate();
-          }
-      } catch (error) {
-          console.error('Error tracking progress:', error);
-          // Handle the error here, e.g., show a toast notification
-          toast.error('Error tracking progress. Please try again later.');
-      }
-  
-      if (detail.attatchment_type == 'link') {
-          window.open(link, '_blank');
-      } else if (detail.attatchment_type == 'pdf') {
-          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
-          setDetailSrc(link);
-          setShowDialog5(true);
-      } else {
-          link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
-          const anchor = document.createElement('a');
-          anchor.href = link;
-          anchor.download = detail.title;
-          anchor.click();
-      }
-  }
-  
-  
+        let link = detail.attatchment;
+
+        const checkbox = document.querySelector(`input[name="content_${detail.detail_id}"]`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+
+        try {
+            const payload = {
+                courseId: id,
+                userEmail: userInfo.email,
+                pdfIds: [detail.detail_id] // Wrap detail_id in an array
+            };
+
+            const response = await learnerApi.post('/progress/tracking', payload);
+
+            if (completedPDFCount + 1 === totalContentDetailsCount) {
+                setShowCertificateButton(true);
+            }
+        } catch (error) {
+            toast.error('Error tracking progress. Please try again later.');
+        }
+
+        if (detail.attatchment_type === 'link') {
+            window.open(link, '_blank');
+        } else if (detail.attatchment_type === 'pdf') {
+            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment + '?view=fit';
+            setDetailSrc(link);
+            setShowDialog5(true);
+        } else {
+            link = import.meta.env.VITE_COURSE_SERVER_URL + detail.attatchment;
+            const anchor = document.createElement('a');
+            anchor.href = link;
+            anchor.download = detail.title;
+            anchor.click();
+        }
+    }
+    
     const generateCertificate = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 800;
-      canvas.height = 600;
-      const ctx = canvas.getContext('2d');
-
-      const background = new Image();
-      background.src = CertificateBackground;
-      background.onload = () => {
-          ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-          ctx.font = 'bold 40px Arial';
-          ctx.fillStyle = '#000';
-          ctx.textAlign = 'center';
-          ctx.fillText('Certificate of Completion', canvas.width / 2, 200);
-
-          ctx.font = '24px Arial';
-          ctx.fillText(`This is to certify that ${userInfo.firstname}`, canvas.width / 2, 300);
-          ctx.fillText(`has successfully completed the course`, canvas.width / 2, 350);
-          ctx.fillText(`${title}`, canvas.width / 2, 400);
-          ctx.fillText(`issued on ${dayjs().format('MMMM DD, YYYY')}`, canvas.width / 2, 450);
-
-          const logo = new Image();
-          logo.src = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fbeautiful%2F&psig=AOvVaw1pp5Le6aEUDZPs2OpDrLsO&ust=1715621404638000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNjp4fXRiIYDFQAAAAAdAAAAABAE"; // Replace with your website logo URL
-          logo.onload = () => {
-              ctx.drawImage(logo, canvas.width - 200, canvas.height - 100, 150, 50);
-
-              const dataUrl = canvas.toDataURL();
-
-              const link = document.createElement('a');
-              link.href = dataUrl;
-              link.download = 'certificate.png';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-          };
-      };
-  }
-
+        const canvas = document.createElement('canvas');
+        canvas.width = 800; // Increased width for a larger certificate
+        canvas.height =800; // Increased height for a larger certificate
+        const ctx = canvas.getContext('2d');
+    
+        // Set white background
+        ctx.fillStyle = '#ffffff'; // White color
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // Add logo at the top-middle
+        const logo = new Image();
+        logo.src = '/LogoBig1.png'; // Replace 'path_to_your_logo.png' with the actual path to your logo
+        logo.onload = () => {
+            const logoWidth = 200; // Adjust the width of the logo as needed
+            const logoHeight = 100; // Adjust the height of the logo as needed
+            const logoX = (canvas.width - logoWidth) / 2;
+            const logoY = 150; // Adjust the vertical position of the logo as needed
+            ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+    
+            // Add certificate text
+            ctx.font = 'bold 40px Arial';
+            ctx.fillStyle = '#000000'; // Black color
+            ctx.textAlign = 'center';
+            ctx.fillText('Certificate of Completion', canvas.width / 2, 300);
+    
+            ctx.font = '24px Arial';
+            ctx.fillText(`This certifies that ${userInfo.displayName} has completed`, canvas.width / 2, 400);
+            ctx.fillText(`the course ${title} with distinction.`, canvas.width / 2, 450);
+            ctx.fillText(`Issued on ${dayjs().format('MMMM DD, YYYY')}`, canvas.width / 2, 500);
+    
+            // Additional text for a more elaborate certificate
+            ctx.font = 'italic 20px Arial';
+            ctx.fillText(`In recognition of outstanding dedication to learning`, canvas.width / 2, 550);
+            ctx.fillText(`and commitment to personal development.`, canvas.width / 2, 580);
+            ctx.fillText(`Presented by Study Storm`, canvas.width / 2, 630);
+    
+            // Convert canvas to data URL and download
+            const dataUrl = canvas.toDataURL();
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `${title}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+    };
+    
     useEffect(() => {
         fetchCourse();
     }, []);
 
     // Calculate the percentage of completed PDFs
     const completedPercentage = totalContentDetailsCount === 0 ? 0 : Math.round((completedPDFCount / totalContentDetailsCount) * 100);
+
+    const handleDownloadCertificate = () => {
+        generateCertificate();
+    };
 
     return (
         <>
@@ -252,32 +247,30 @@ const CourseContentPage = () => {
                                         <img src={import.meta.env.VITE_COURSE_SERVER_URL + thumbnail} onError={(event) => { event.target.src = "/default.png" }} alt={title} style={{ width: '100%', height: 'auto', maxHeight: '350px', objectFit: 'cover', borderRadius: '5px' }} />
                                     </Grid>
                                     <Grid item xs={12} sm={9} md={12} lg={9}>
-    <Grid container spacing={2} height={'100%'}>
-    <Grid item xs={12} sm={9} md={12} lg={9}>
-    <Grid container spacing={2} height={'100%'}>
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-            <Typography fontSize={25}>{title}</Typography>
-            <p>{desc}</p>
-            <p>Start Date: {new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <br />
-            <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
-            <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
-        </Grid>
-    </Grid>
-</Grid>
-<Grid item xs={12} sm={3} md={12} lg={3} justifyContent="flex-end">
-    <Card elevation={3} style={{ padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
-        <Typography variant="h6" align="center" padding={2}>Progress</Typography>
-        <div style={{ width: 100, height: 100, margin: 'auto' }}>
-            <CircularProgressbar value={completedPercentage} text={`${completedPercentage}%`} />
-        </div>
-        <Typography align="center" padding={2}>Completed: {completedPDFCount}   out of {totalContentDetailsCount}</Typography>
-    </Card>
-</Grid>
-
-    </Grid>
-</Grid>
-
+                                        <Grid container spacing={2} height={'100%'}>
+                                            <Grid item xs={12} sm={9} md={12} lg={9}>
+                                                <Grid container spacing={2} height={'100%'}>
+                                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                                        <Typography fontSize={25}>{title}</Typography>
+                                                        <p>{desc}</p>
+                                                        <p>Start Date: {new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                                        <br />
+                                                        <Typography fontSize={17}>{price == 0 ? 'FREE' : `$${price}`}</Typography>
+                                                        <Typography fontSize={15}>{level} • {type} • {duration}</Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item xs={12} sm={3} md={12} lg={3} justifyContent="flex-end">
+                                                <Card elevation={3} style={{ padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
+                                                    <Typography variant="h6" align="center" padding={2}>Progress</Typography>
+                                                    <div style={{ width: 100, height: 100, margin: 'auto' }}>
+                                                        <CircularProgressbar value={completedPercentage} text={`${completedPercentage}%`} />
+                                                    </div>
+                                                    <Typography align="center" padding={2}>Completed: {completedPDFCount}   out of {totalContentDetailsCount}</Typography>
+                                                </Card>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </CardContent>
                         </Card>
@@ -304,6 +297,13 @@ const CourseContentPage = () => {
                             </Accordion>
                         ))}
                     </Grid>
+                    {completedPercentage === 100 && (
+                        <Grid item xs={12} textAlign="center">
+                            <Button variant="contained" color="primary" onClick={handleDownloadCertificate}>
+                                Download Certificate
+                            </Button>
+                        </Grid>
+                    )}
                 </Grid>
             </div>
             <Backdrop
