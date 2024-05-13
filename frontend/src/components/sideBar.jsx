@@ -136,6 +136,45 @@ export default function Sidebar() {
           </ListItem></Link>
 
           {userInfo && userInfo.userType === 'ROLE_ADMIN' &&
+          <Link to='/admin' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin') ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                  <MenuBook />
+                </ListItemIcon>
+                <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem></Link>
+          }
+
+          {userInfo && userInfo.userType === 'ROLE_INSTRUCTOR' &&
+          <Link to='/instructor' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/instructor') ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                  <MenuBook />
+                </ListItemIcon>
+                <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem></Link>
+          }
+
+          {userInfo && userInfo.userType === 'ROLE_LEARNER' &&
+          <Link to='/learner' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/learner') ? sideBarStyles.active : ''}`}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                  <MenuBook />
+                </ListItemIcon>
+                <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem></Link>
+          }
+
+          {userInfo && userInfo.userType === 'ROLE_ADMIN' &&
           <Link to='/admin/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title={!open ? 'Courses' : ''} placement="right" arrow>
               <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/course') ? sideBarStyles.active : ''}`}>
