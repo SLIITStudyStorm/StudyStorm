@@ -51,7 +51,7 @@ const AdminCourseHomePage = () => {
                         </Box>
                         <TabPanel value="pending">
                             <Grid container spacing={2}>
-                                <Grid item xs={6}>
+                                <Grid item xs={12}>
                                     <Typography fontSize={30}>Courses Pending Approval</Typography>
                                 </Grid>
                                 {courses.map((course, index) => (

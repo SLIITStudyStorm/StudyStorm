@@ -2,18 +2,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import BreadCrumbs from "../../components/breadcrubs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { courseApi } from "../../utils/api";
+import { authApi, courseApi, learnerApi } from "../../utils/api";
 import dayjs from "dayjs";
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Switch, Tab, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
 import { Add, AddCircleOutline, Close, Delete, Edit, ExpandMore } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import FormUploadArea from "../../components/fileUpload";
 import { FileIconList } from "../../data";
 import CourseContentStyles from '../../styles/courseContent.module.css'
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { DataGrid } from "@mui/x-data-grid";
+import CustomProgresssBar from "../../components/customProgressBar";
 
 const CourseContentPage = () => {
     
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoading2, setIsLoading2] = useState(false);
     const [thumbnail, setThumbnail] = useState('');
     const [title, setTitle] = useState('');
     const [customCrumb, setCustomCrumb] = useState('');
@@ -58,6 +62,44 @@ const CourseContentPage = () => {
 
     const [detailSrc, setDetailSrc] = useState('');
 
+    const [tab, setTab] = useState('content');
+    const [totalContent, setTotalContent] = useState(0);
+    const [rows, setRows] = useState([]);
+    
+    const columns = [
+        { 
+            field: 'id', 
+            headerName: 'ID', 
+            width: 50 
+        },
+        { 
+            field: 'firstName', 
+            headerName: 'First Name', 
+            width: 150 
+        },
+        { 
+            field: 'lastName', 
+            headerName: 'Last Name', 
+            width: 150 
+        },
+        { 
+            field: 'email', 
+            headerName: 'Email', 
+            width: 250 
+        },
+        { 
+            field: 'phoneNumber', 
+            headerName: 'Phone No', 
+            width: 120 
+        },
+        { 
+            field: 'completedProgres', 
+            headerName: 'Progress', 
+            width: 120,
+            renderCell: ({formattedValue}) => (<CustomProgresssBar value={(formattedValue/totalContent)*100} />)
+        },
+    ]
+
     const { id } = useParams()
     const navigate = useNavigate();
 
@@ -92,7 +134,6 @@ const CourseContentPage = () => {
         }
     }
 
-
     const promptApprove = (status) => {
         setApproveAction(status);
         setShowDialog4(true)
@@ -112,6 +153,59 @@ const CourseContentPage = () => {
         }
     }
 
+    const fetchCourseLearners = async() => {
+        try {
+            setIsLoading2(true);
+            let {data} = await learnerApi.get(`enrollment/usersByCourse/${id}`);
+
+            let learners = [];
+            let emails = data.userEmails;
+            let email, firstName, lastName, phoneNumber, completedProgres, learner;
+            for (let i = 0; i < emails.length; i++) {
+                email = emails[i];
+
+
+                try {
+                    let {data:userData} = await authApi.get(`/v1/user/${email}`);
+                    firstName = userData.firstName
+                    lastName = userData.lastName
+                    phoneNumber = userData.phoneNumber
+                } catch (error) {
+                    console.log(error.message);
+                    continue;
+                }
+
+                try {
+                    let {data:progresData} = await learnerApi.get(`progress/tracking/${email}/${id}`);
+                    completedProgres = progresData?.progress?.pdfIds?.length || 0;
+                } catch (error) {
+                    console.log(error.message);
+                }
+
+                learner = {
+                    id: i+1,
+                    email,
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    completedProgres
+                }
+
+                console.log(completedProgres);
+                learners.push(learner);              
+                
+            }
+
+            setRows(learners);
+            // toast.success(data.message);
+        } catch (error) {
+            setRows([]);
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setIsLoading2(false);
+        }
+    }
+
     const fetchCourseContents = async(page = 1, rows = 50) => {
         try {
             setIsLoading(true);
@@ -120,16 +214,19 @@ const CourseContentPage = () => {
             setCourseContents(data.payload.rows);
 
             let details = {}
+            let contentLength = 0;
             let content_id;
             let detailData;
             if(data.payload.rows){
                 for(let i = 0; i < data.payload.rows.length; i++){
                     content_id = data.payload.rows[i].content_id;
                     detailData = await fetchCourseContentDetails(content_id);
+                    contentLength += (detailData?.length || 0)
                     details[content_id] = detailData
                 }
             }
             setCourseContentDetails(details)
+            setTotalContent(contentLength)
 
             // toast.success(data.message);
         } catch (error) {
@@ -144,7 +241,7 @@ const CourseContentPage = () => {
         try {
             setIsLoading(true);
             let {data} = await courseApi.get(`/course/content/detail/all`, {params: {page, rows, content_id}});
-
+            
             return (data.payload.rows);
             // toast.success(data.message);
         } catch (error) {
@@ -334,6 +431,7 @@ const CourseContentPage = () => {
         else if(userInfo.userType == "ROLE_INSTRUCTOR"){
             setEditable(true);
             setApprovable(false);
+            fetchCourseLearners()
         }
     }, [])
 
@@ -384,60 +482,92 @@ const CourseContentPage = () => {
                             </CardContent>
                         </Card>
                     </Grid>
-                    {
-                        editable &&
-                        <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
-                            <Button variant={'contained'} color={'primary'} onClick={() => promptContentDialog('')}><Add /></Button>
-                        </Grid>
-                    }
-                    <Grid item xs={12} sm={12} md={12} lg={12} paddingBottom={'10px'}>
-                        {courseContents.map((content, index) => (
-                            <Accordion key={index}>
-                                <AccordionSummary expandIcon={<ExpandMore />}>
-                                    <Typography>{content.title}</Typography>
-                                    {
-                                        editable &&
-                                        <>
-                                            <IconButton style={{marginLeft:'5px', height:'25px', width:'25px'}} onClick={() => promptContentDialog(content)}><Edit /></IconButton>
-                                            <IconButton style={{marginLeft:'5px', height:'25px', width:'25px'}} onClick={() => promptDeleteContent(content.content_id)}><Delete fontSize="20px"/></IconButton>
-                                        </>
-                                    }
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    {content.subtitle && <Typography fontWeight={700} marginBottom={'15px'}>{content.subtitle}</Typography>}
-                                    {content.desc &&
-                                    <Typography>
-                                        {content.desc}
-                                    </Typography>
-                                    }
-                                    <br />
-                                    {courseContentDetails[content.content_id]?.map((detail, index) => (
-                                        <Grid container key={index} spacing={0} alignItems={'center'} className={CourseContentStyles.fileRow}>
-                                            <Grid item md={.4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                                <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
-                                            </Grid>
-                                            <Grid item md={11} style={{cursor:'pointer'}} onClick={() => handleCourseContentDetailClick(detail)}>
-                                                <Typography>{detail.title}</Typography>
-                                            </Grid>
-                                        {
-                                            editable &&
-                                            <Grid item md={.6}>
-                                                <IconButton onClick={() => promptDeleteFile(detail.detail_id)}><Delete /> </IconButton>
-                                            </Grid>
-                                        }
-                                        </Grid>
-                                    ))}
-                                    {
-                                        editable &&
-                                        <>
-                                            <Button style={{margin:'5px', padding:'10px'}} onClick={() => promptContentDetailDialog(content.content_id)}><AddCircleOutline /> &nbsp;&nbsp;&nbsp;Add Content</Button>
-                                        </>
-                                    }
-                                </AccordionDetails>
-                            </Accordion>
-                        ))}
-                    </Grid>
                 </Grid>
+                <TabContext value={tab}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <TabList onChange={(e, newVal) => setTab(newVal)}>
+                        <Tab label="Content" value="content" />
+                        { editable && <Tab label="Learners" value="learners" /> }
+                    </TabList>
+                    </Box>
+                    <TabPanel value="content">
+                        <Grid container spacing={2}>
+                            {
+                                editable &&
+                                <Grid item xs={12} sm={12} md={12} lg={12} textAlign={'right'}>
+                                    <Button variant={'contained'} color={'primary'} onClick={() => promptContentDialog('')}><Add /></Button>
+                                </Grid>
+                            }
+                            <Grid item xs={12} sm={12} md={12} lg={12} paddingBottom={'10px'}>
+                                {courseContents.map((content, index) => (
+                                    <Accordion key={index}>
+                                        <AccordionSummary expandIcon={<ExpandMore />}>
+                                            <Typography>{content.title}</Typography>
+                                            {
+                                                editable &&
+                                                <>
+                                                    <IconButton style={{marginLeft:'5px', height:'25px', width:'25px'}} onClick={() => promptContentDialog(content)}><Edit /></IconButton>
+                                                    <IconButton style={{marginLeft:'5px', height:'25px', width:'25px'}} onClick={() => promptDeleteContent(content.content_id)}><Delete fontSize="20px"/></IconButton>
+                                                </>
+                                            }
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {content.subtitle && <Typography fontWeight={700} marginBottom={'15px'}>{content.subtitle}</Typography>}
+                                            {content.desc &&
+                                            <Typography>
+                                                {content.desc}
+                                            </Typography>
+                                            }
+                                            <br />
+                                            {courseContentDetails[content.content_id]?.map((detail, index) => (
+                                                <Grid container key={index} spacing={0} alignItems={'center'} className={CourseContentStyles.fileRow}>
+                                                    <Grid item md={.4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                                        <img alt={detail.title} role="presentation" src={getFileType(detail.attatchment_type)} width={25} />
+                                                    </Grid>
+                                                    <Grid item md={11} style={{cursor:'pointer'}} onClick={() => handleCourseContentDetailClick(detail)}>
+                                                        <Typography>{detail.title}</Typography>
+                                                    </Grid>
+                                                {
+                                                    editable &&
+                                                    <Grid item md={.6}>
+                                                        <IconButton onClick={() => promptDeleteFile(detail.detail_id)}><Delete /> </IconButton>
+                                                    </Grid>
+                                                }
+                                                </Grid>
+                                            ))}
+                                            {
+                                                editable &&
+                                                <>
+                                                    <Button style={{margin:'5px', padding:'10px'}} onClick={() => promptContentDetailDialog(content.content_id)}><AddCircleOutline /> &nbsp;&nbsp;&nbsp;Add Content</Button>
+                                                </>
+                                            }
+                                        </AccordionDetails>
+                                    </Accordion>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    </TabPanel>
+                    { editable &&
+                    <TabPanel value="learners">
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                    pageSize: 5,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+                            
+                            disableRowSelectionOnClick
+                            loading={isLoading2}
+
+                        />
+                    </TabPanel>
+                    }
+                </TabContext>
             </div>
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

@@ -1,5 +1,5 @@
 // Course Data
-const SubjectList = ["Subject 1","Subject 2"];
+const SubjectList = ["Maths", "IT", "English", "Physics", "Biology", "History"];
 const LanguageList = [
     "Afrikaans",
     "Albanian - shqip",
