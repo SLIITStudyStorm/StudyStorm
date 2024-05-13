@@ -13,17 +13,17 @@ services:
     volumes:
       - mysql_data_auth:/var/lib/mysql
 
-  course-db:
+  courses-db:
     image: mysql:latest
     restart: always
-    container_name: course-db
+    container_name: courses-db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: course
+      MYSQL_DATABASE: courses
     ports:
       - "3308:3306"
     volumes:
-      - mysql_data_course:/var/lib/mysql
+      - mysql_data_courses:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  # Health check command
       timeout: 10s
@@ -71,14 +71,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      DB_HOST: course-db
+      DB_HOST: courses-db
       DB_USER: root
-      MYSQL_DATABASE: studystorm
+      MYSQL_DATABASE: courses
       MYSQL_ROOT_PASSWORD: root
       JWT_SECRET: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
       NOTIFICATION_SERVER_URL: http://localhost:4000/
     depends_on:
-      course-db:
+      courses-db:
         condition: service_healthy
 
   notification-service:
@@ -124,4 +124,4 @@ services:
 
 volumes:
   mysql_data_auth:
-  mysql_data_course:
+  mysql_data_courses:

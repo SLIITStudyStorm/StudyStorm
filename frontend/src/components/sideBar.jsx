@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate  } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, List, CssBaseline, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, Tooltip, Menu, MenuItem, Avatar } from '@mui/material';
-import { HomeRounded, MenuRounded, MenuOpenRounded, AccountCircle, Login, Favorite, Public, MenuBook } from '@mui/icons-material';
+import { HomeRounded, MenuRounded, MenuOpenRounded, AccountCircle, Login, Favorite, Public, MenuBook, Person, People } from '@mui/icons-material';
 import { IoTelescope } from "react-icons/io5";
 import { RiCameraLensLine } from "react-icons/ri";
 import { Image } from 'react-bootstrap';
@@ -134,39 +134,13 @@ export default function Sidebar() {
               </ListItemButton>
             </Tooltip>
           </ListItem></Link>
-
-          {userInfo && userInfo.userType === 'ROLE_ADMIN' &&
-          <Link to='/admin' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin') ? sideBarStyles.active : ''}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
-                </ListItemIcon>
-                <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem></Link>
-          }
-
-          {userInfo && userInfo.userType === 'ROLE_INSTRUCTOR' &&
-          <Link to='/instructor' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/instructor') ? sideBarStyles.active : ''}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
-                </ListItemIcon>
-                <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem></Link>
-          }
-
+          
           {userInfo && userInfo.userType === 'ROLE_LEARNER' &&
           <Link to='/learner' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/learner') ? sideBarStyles.active : ''}`}>
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.split('/')[activeRoute.split('/').length - 1] == ('learner') ? sideBarStyles.active : ''}`}>
                 <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
+                  <Person />
                 </ListItemIcon>
                 <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -175,29 +149,66 @@ export default function Sidebar() {
           }
 
           {userInfo && userInfo.userType === 'ROLE_ADMIN' &&
-          <Link to='/admin/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? 'Courses' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/course') ? sideBarStyles.active : ''}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
-                </ListItemIcon>
-                <ListItemText primary={'Courses'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem></Link>
+          <>
+            <Link to='/admin' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+              <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
+                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.split('/')[activeRoute.split('/').length - 1] == ('admin') ? sideBarStyles.active : ''}`}>
+                  <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                    <Person />
+                  </ListItemIcon>
+                  <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem></Link>
+
+            <Link to='/admin/users/all' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+              <Tooltip title={!open ? 'Users' : ''} placement="right" arrow>
+                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/users/all') ? sideBarStyles.active : ''}`}>
+                  <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                    <Person />
+                  </ListItemIcon>
+                  <ListItemText primary={'Users'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem></Link>
+
+            <Link to='/admin/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+              <Tooltip title={!open ? 'Courses' : ''} placement="right" arrow>
+                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/course') ? sideBarStyles.active : ''}`}>
+                  <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                    <People />
+                  </ListItemIcon>
+                  <ListItemText primary={'Courses'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem></Link>
+          </>
           }
 
           {userInfo && userInfo.userType === 'ROLE_INSTRUCTOR' &&
-          <Link to='/instructor/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? 'My Courses' : ''} placement="right" arrow>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/instructor/course') ? sideBarStyles.active : ''}`}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                  <MenuBook />
-                </ListItemIcon>
-                <ListItemText primary={'My Courses'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem></Link>
+          <>
+            <Link to='/instructor' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+              <Tooltip title={!open ? 'Profile' : ''} placement="right" arrow>
+                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.split('/')[activeRoute.split('/').length - 1] == ('instructor') ? sideBarStyles.active : ''}`}>
+                  <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                    <Person />
+                  </ListItemIcon>
+                  <ListItemText primary={'Profile'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem></Link>
+            
+            <Link to='/instructor/courses' style={{textDecoration:'none', color:'black'}}><ListItem disablePadding sx={{ display: 'block' }}>
+              <Tooltip title={!open ? 'My Courses' : ''} placement="right" arrow>
+                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/instructor/course') ? sideBarStyles.active : ''}`}>
+                  <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
+                    <MenuBook />
+                  </ListItemIcon>
+                  <ListItemText primary={'My Courses'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem></Link>
+          </>
           }
           
         </List>
