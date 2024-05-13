@@ -177,8 +177,8 @@ const CourseContentPage = () => {
     
     const generateCertificate = () => {
         const canvas = document.createElement('canvas');
-        canvas.width = 800; // Increased width for a larger certificate
-        canvas.height =800; // Increased height for a larger certificate
+        canvas.width = 800; 
+        canvas.height =800;
         const ctx = canvas.getContext('2d');
     
         // Set white background
@@ -187,17 +187,17 @@ const CourseContentPage = () => {
     
         // Add logo at the top-middle
         const logo = new Image();
-        logo.src = '/LogoBig1.png'; // Replace 'path_to_your_logo.png' with the actual path to your logo
+        logo.src = '/LogoBig1.png';
         logo.onload = () => {
-            const logoWidth = 200; // Adjust the width of the logo as needed
-            const logoHeight = 100; // Adjust the height of the logo as needed
+            const logoWidth = 200;
+            const logoHeight = 100; 
             const logoX = (canvas.width - logoWidth) / 2;
-            const logoY = 150; // Adjust the vertical position of the logo as needed
+            const logoY = 150; 
             ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
     
             // Add certificate text
             ctx.font = 'bold 40px Arial';
-            ctx.fillStyle = '#000000'; // Black color
+            ctx.fillStyle = '#000000'; 
             ctx.textAlign = 'center';
             ctx.fillText('Certificate of Completion', canvas.width / 2, 300);
     
