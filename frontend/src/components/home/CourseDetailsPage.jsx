@@ -71,7 +71,7 @@ const CourseDetailsPage = () => {
 
   const handleGetStarted = () => {
     if (currentUserEmail) {
-      const paymentUrl = `/paymentPage?email=${encodeURIComponent(currentUserEmail)}&courseId=${id}`;
+      const paymentUrl = `${import.meta.env.VITE_PAYMENT_SERVER_URL}?email=${encodeURIComponent(currentUserEmail)}&courseId=${id}`;
       window.location.href = paymentUrl;
     } else {
       toast.error("User email not found. Please log in to access this course.");
