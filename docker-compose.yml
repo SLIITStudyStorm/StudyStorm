@@ -48,6 +48,24 @@ services:
     environment:
       MONGODB_CONNECTION_STRING: "mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&"
 
+  payment-db:
+    image: mongo:latest
+    restart: always
+    container_name: payment-db
+    ports:
+      - "27017"
+    environment:
+      MONGODB_CONNECTION_STRING: "mongodb+srv://kalanadias:Kalana123@cluster0.ewbh7py.mongodb.net/PaymentServiceForStudyStorm?retryWrites=true&w=majority&appName=Cluster0"
+
+  feedback-db:
+    image: mongo:latest
+    restart: always
+    container_name: learner-db
+    ports:
+      - "27017"
+    environment:
+      MONGODB_CONNECTION_STRING: "mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&"
+
   auth-service:
     build:
       context: ./backend/AuthenticationService
@@ -106,6 +124,35 @@ services:
     environment:
       PORT: 8000
       MONGODB_URL: mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&
+    depends_on:
+      - learner-db
+
+  feedback-service:
+    build:
+      context: ./backend/FeedbackAndRatingService
+      dockerfile: Dockerfile
+    container_name: feedback-service
+    ports:
+      - "5080:5080"
+    environment:
+      PORT: 5080
+      MONGODB_URL: mongodb+srv://sathiradissanayaka45:dilshara224@timetabletesting.zbavpto.mongodb.net/?retryWrites=true&w=majority&
+    depends_on:
+      - learner-db
+
+  payment-service:
+    build:
+      context: ./backend/PaymentService
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "8000:8000"
+    environment:
+      PAYHERE_SECRET: "NDI3NDY0OTg1NTkzMzMxNDIzMjQxMjMwMzczODUxNTk2OTM1NTA0"
+      MONGODB_URI: "mongodb+srv://kalanadias:Kalana123@cluster0.ewbh7py.mongodb.net/PaymentServiceForStudyStorm?retryWrites=true&w=majority&appName=Cluster0"
+      COURSE_SERVER: http://localhost:5000
+      LEARNER_SERVER: http://localhost:8000
+      NOTIFICATION_SERVER: http://localhost:4000
     depends_on:
       - learner-db
       
