@@ -147,7 +147,7 @@ const LanguageList = [
 const TypeList = ["Guided Project","Course","Project","Specialization","Professional Certificate","MasterTrack Certificate"];
 const LevelList = ["Beginner","Intermediate","Advanced"];
 const DurationList = ["Less Than 2 Hours", "1-4 Weeks", "1-3 Months", "3-6 Months", "6-9 Months", "9-12 Months", "More Than 1 Year"];
-const SkillsList = ["Leadership and Management", "Communication", "Strategy", "Data Analysis"];
+const SkillsList = ["Leadership and Management", "Communication", "Strategy", "Data Analysis", "Formatting Excel Spreadsheets", "Creating Basic Formulas in Excel Spreadsheets", "Creating Excel Spreadsheets", "Maneuvering around Excel Spreadsheets","Data Science","Python Programming","Numpy","Pandas","Keyword Research","Marketing","Digital Marketing","PPC Advertising","Paid Search Advertising","HTML","JavaScript","Css Frameworks","Cascading Style Sheets (CSS)"];
 
 // File Types
 const FileIconList = [

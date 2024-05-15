@@ -58,10 +58,10 @@ This repository contains the microservices for the Educational Platform project.
    docker compose up
    ```
 
-3. Access the microservices via HTTP endpoints:
+3. Access the system via :
 
-   - User Service: `http://localhost:3000`
-   - Course Service: `http://localhost:3001`
+   - `http://localhost:3000`
+   
 
 ### Deployment
 

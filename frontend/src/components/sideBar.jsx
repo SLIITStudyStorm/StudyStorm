@@ -165,7 +165,7 @@ export default function Sidebar() {
               <Tooltip title={!open ? 'Users' : ''} placement="right" arrow>
                 <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/users/all') ? sideBarStyles.active : ''}`}>
                   <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                    <Person />
+                    <People />
                   </ListItemIcon>
                   <ListItemText primary={'Users'} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
@@ -176,7 +176,7 @@ export default function Sidebar() {
               <Tooltip title={!open ? 'Courses' : ''} placement="right" arrow>
                 <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }} className={`${sideBarStyles.itmBtn} ${activeRoute.includes('/admin/course') ? sideBarStyles.active : ''}`}>
                   <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', color: 'inherit' }}>
-                    <People />
+                    <MenuBook />
                   </ListItemIcon>
                   <ListItemText primary={'Courses'} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
