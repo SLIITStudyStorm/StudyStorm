@@ -54,7 +54,7 @@ export default function VerifyOTP({ email, setVerifyOtpState, setChangePasswordS
         setChangePasswordState(true);
     } catch (error) {
       console.error('OTP verification failed!', error);
-      toast.error(error.response?.data?.message || error.message);
+      toast.error('OTP verification failed! Enter the correct OTP.');
       setError(true);
       setSuccess(false);
     }
