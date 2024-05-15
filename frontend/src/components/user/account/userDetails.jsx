@@ -21,6 +21,8 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../../utils/api";
+import { useDispatch } from "react-redux";
+import { clearUserInfo } from "../../../slices/authSlice";
 
 export default function AccountDetailsForm() {
   const [user, setUser] = useState({});
@@ -48,6 +50,8 @@ export default function AccountDetailsForm() {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [payload, setPayload] = useState({});
+
+  const dispatch = useDispatch();
 
 const profilePayload = {
 
@@ -121,16 +125,12 @@ const passwordPayload = {
     try {
       const response = await authApi.patch(`/v1/${url}`, payload)
       console.log(response);
-      if(response.data === "Password changed successfully") {
-        toast.success("Profile updated successfully! Please login again.");
+      if(response) {
+        toast.success("Profile updated successfully!");
       }
-      else{
-        toast.error(response.data)
-        return;
-      }
-      
-      localStorage.clear();
-      navigate("/login")
+    // logout user
+    dispatch(clearUserInfo());
+    navigate("/login");
 
     } catch (error) {
       console.error(error);
