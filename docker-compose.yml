@@ -94,7 +94,7 @@ services:
       MYSQL_DATABASE: courses
       MYSQL_ROOT_PASSWORD: root
       JWT_SECRET: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
-      NOTIFICATION_SERVER_URL: http://localhost:4000/
+      NOTIFICATION_SERVER_URL: http://notification-service:4000/
     depends_on:
       courses-db:
         condition: service_healthy
@@ -150,9 +150,9 @@ services:
     environment:
       PAYHERE_SECRET: "NDI3NDY0OTg1NTkzMzMxNDIzMjQxMjMwMzczODUxNTk2OTM1NTA0"
       MONGODB_URI: "mongodb+srv://kalanadias:Kalana123@cluster0.ewbh7py.mongodb.net/PaymentServiceForStudyStorm?retryWrites=true&w=majority&appName=Cluster0"
-      COURSE_SERVER: http://localhost:5000
-      LEARNER_SERVER: http://localhost:8000
-      NOTIFICATION_SERVER: http://localhost:4000
+      COURSE_SERVER: http://course-service:5000
+      LEARNER_SERVER: http://learner-service:8000
+      NOTIFICATION_SERVER: http://notification-service:4000
     depends_on:
       - payment-db
       
